@@ -4,8 +4,11 @@ const router = require('koa-router')();
 
 const controller = require('../controllers/user.controller');
 
-// Create route for users
+// Create routes for users
 router
-  .get('/:id', controller.getUser);
+  .post('/', controller.createUser)
+  .get('/:id', controller.getUser)
+  .put('/:id', controller.updateUser)
+  .delete('/:id', controller.deleteUser);
 
 module.exports = router;

@@ -6,6 +6,9 @@ const controller = require('../controllers/event.controller');
 
 // Create routes for events
 router
-  .get('/:id', controller.getEvent);
+  .post('/', controller.createEvent)
+  .get('/:id', controller.getEvent)
+  .put('/:id', controller.updateEvent)
+  .delete('/:id', controller.deleteEvent);
 
 module.exports = router;
