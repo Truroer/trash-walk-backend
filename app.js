@@ -4,7 +4,7 @@ const Koa = require('koa');
 const logger = require('koa-logger');
 const cors = require('koa-cors');
 
-// const router = require('./routes/index.js');
+const router = require('./routes/index.js');
 const errorHandler = require('./middlewares/error.handler');
 const errorNotFound = require('./middlewares/error.notFound');
 
@@ -13,8 +13,8 @@ const app = new Koa();
 app
   .use(logger())
   .use(cors())
-  // .use(router.routes())
-  // .use(router.allowedMethods());
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 // Handle errors
 app
@@ -27,5 +27,4 @@ const ENV = process.env.NODE_ENV || 'development';
 
 // Open server connection
 app.listen(PORT, () =>
-  console.log(`🌍 Server running on port ${PORT} - ${ENV} mode!`),
-);
+  console.log(`🌍 Server running on port ${PORT} - ${ENV} mode!`));

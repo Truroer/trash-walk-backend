@@ -1,6 +1,6 @@
 {
   "extends": ["airbnb-standard"],
   "rules": {
-    "strict": "global",
+    "strict": 0,
   }
 }
