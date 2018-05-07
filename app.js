@@ -7,6 +7,7 @@ const cors = require('koa-cors');
 const router = require('./routes/index.js');
 const errorHandler = require('./middlewares/error.handler');
 const errorNotFound = require('./middlewares/error.notFound');
+require('./db');
 
 const app = new Koa();
 
