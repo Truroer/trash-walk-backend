@@ -1,0 +1,23 @@
+{
+  "name": "trash-walk-backend",
+  "version": "1.0.0",
+  "description": "Server based on Koa for Trash Walk Mobile platform",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://marcoantonioghiani01:messenger2008@github.com/cherlin/trash-walk-backend.git"
+  },
+  "author": "Marco Antonio Ghiani, Juliane Nagao, Christofer Herlin, Necati Ozmen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cherlin/trash-walk-backend/issues"
+  },
+  "homepage": "https://github.com/cherlin/trash-walk-backend#readme",
+  "devDependencies": {
+    "eslint-config-airbnb-standard": "^1.6.6",
+  }
+}
