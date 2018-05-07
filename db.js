@@ -6,7 +6,7 @@ require('dotenv').config();
 // Create the url based on the config file .env in the root directory
 const dbURI = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
-// Initialize postgres client and pool
+// Initialize postgres client
 const client = new Client(dbURI);
 
 // Connect to the DB
@@ -15,6 +15,14 @@ client
   .then(() => {
     console.log(`📚 Connected to ${client.database} at ${client.host}:${client.port}`);
   })
+  .catch(e => console.log(e));
+
+client.query('CREATE TABLE IF NOT EXISTS users(user_id serial PRIMARY KEY, name text NOT NULL, email text NOT NULL, token text NOT NULL);')
+  .then(res => console.log('Users table created'))
+  .catch(e => console.log(e));
+
+client.query('CREATE TABLE IF NOT EXISTS events(event_id serial PRIMARY KEY, status text NOT NULL, date_time date NOT NULL DEFAULT CURRENT_DATE);')
+  .then(res => console.log('Events table created'))
   .catch(e => console.log(e));
 
 module.exports = client;
