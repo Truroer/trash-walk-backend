@@ -2,5 +2,6 @@
   "extends": ["airbnb-standard"],
   "rules": {
     "strict": 0,
+    "comma-dangle": 0,
   }
 }
