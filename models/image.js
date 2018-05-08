@@ -6,7 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     imageUrl: DataTypes.STRING
   }, {});
   Image.associate = (models) => {
-    // associations can be defined here
+    Image.belongsTo(models.participation, {
+      onDelete: 'CASCADE',
+      foreignKey: {
+        allowNull: false
+      }
+    });
   };
   return Image;
 };

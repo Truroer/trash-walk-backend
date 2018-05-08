@@ -1,34 +1,42 @@
 'use strict';
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Locations', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      user_id: {
-        type: Sequelize.UUID
-      },
-      event_id: {
-        type: Sequelize.UUID
-      },
-      geography: {
-        type: Sequelize.GEOMETRY
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Locations', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER
+    },
+    user_id: {
+      type: Sequelize.UUID,
+      onDelete: 'CASCADE',
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
       }
-    });
-  },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Locations');
-  }
+    },
+    event_id: {
+      type: Sequelize.UUID,
+      onDelete: 'CASCADE',
+      allowNull: false,
+      references: {
+        model: 'Events',
+        key: 'id'
+      }
+    },
+    geography: {
+      type: Sequelize.GEOMETRY
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    }
+  }),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Locations')
 };

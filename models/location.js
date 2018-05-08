@@ -7,7 +7,19 @@ module.exports = (sequelize, DataTypes) => {
     geography: DataTypes.GEOMETRY
   }, {});
   Location.associate = (models) => {
-    // associations can be defined here
+    Location
+      .belongsTo(models.event, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      })
+      .belongsTo(models.user, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      });
   };
   return Location;
 };

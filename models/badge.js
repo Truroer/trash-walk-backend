@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     badge: DataTypes.STRING
   }, {});
   Badge.associate = (models) => {
-    // associations can be defined here
+    Badge.hasMany(models.achievement);
   };
   return Badge;
 };

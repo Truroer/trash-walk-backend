@@ -7,7 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     active: DataTypes.BOOLEAN
   }, {});
   Event.associate = (models) => {
-    // associations can be defined here
+    Event
+      .hasMany(models.location)
+      .hasMany(models.participation);
   };
   return Event;
 };

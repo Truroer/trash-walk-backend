@@ -7,7 +7,19 @@ module.exports = (sequelize, DataTypes) => {
     date: DataTypes.DATE
   }, {});
   Achievement.associate = (models) => {
-    // associations can be defined here
+    Achievement
+      .belongsTo(models.badge, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      })
+      .belongsTo(models.user, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      });
   };
   return Achievement;
 };

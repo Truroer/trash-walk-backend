@@ -7,7 +7,21 @@ module.exports = (sequelize, DataTypes) => {
     distance: DataTypes.FLOAT
   }, {});
   Participation.associate = (models) => {
-    // associations can be defined here
+    Participation
+      .belongsTo(models.event, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      })
+      .belongsTo(models.user, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          allowNull: false
+        }
+      })
+      .hasMany(models.comment)
+      .hasMany(models.image);
   };
   return Participation;
 };

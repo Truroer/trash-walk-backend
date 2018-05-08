@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     token: DataTypes.STRING
   }, {});
   User.associate = (models) => {
-    // associations can be defined here
+    User
+      .hasMany(models.achievement)
+      .hasMany(models.location)
+      .hasMany(models.participation);
   };
   return User;
 };

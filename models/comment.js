@@ -6,7 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     comments: DataTypes.STRING
   }, {});
   Comment.associate = (models) => {
-    // associations can be defined here
+    Comment.belongsTo(models.participation, {
+      onDelete: 'CASCADE',
+      foreignKey: {
+        allowNull: false
+      }
+    });
   };
   return Comment;
 };
