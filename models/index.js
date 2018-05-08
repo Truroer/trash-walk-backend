@@ -15,4 +15,5 @@ module.exports = {
   Locations,
   Participations,
   Users,
-}
+  Events
+};

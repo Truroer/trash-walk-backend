@@ -4,7 +4,7 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const Image = sequelize.define('image', {
+const Images = sequelize.define('images', {
   participation_id: {
     type: Sequelize.UUIDV4
   },
@@ -12,3 +12,5 @@ const Image = sequelize.define('image', {
     type: Sequelize.STRING
   }
 });
+
+module.exports = Images;
