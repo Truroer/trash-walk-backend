@@ -4,7 +4,7 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const Comment = sequelize.define('comment', {
+const Comments = sequelize.define('comments', {
   participation_id: {
     type: Sequelize.UUIDV4
   },
@@ -12,3 +12,5 @@ const Comment = sequelize.define('comment', {
     type: Sequelize.STRING
   }
 });
+
+module.exports = Comments;

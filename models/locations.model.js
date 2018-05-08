@@ -4,14 +4,16 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const Participation = sequelize.define('participation', {
+const Locations = sequelize.define('locations', {
   user_id: {
     type: Sequelize.UUIDV4
   },
   event_id: {
     type: Sequelize.UUIDV4
   },
-  distance: {
-    type: Sequelize.INTEGER
+  geoJSON: {
+    type: Sequelize.GEOMETRY('POINT')
   }
 });
+
+module.exports = Locations;

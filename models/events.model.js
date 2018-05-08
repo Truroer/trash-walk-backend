@@ -4,9 +4,10 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const Event = sequelize.define('event', {
+const Events = sequelize.define('events', {
   event_id: {
-    type: Sequelize.UUIDV4
+    type: Sequelize.UUIDV4,
+    primaryKey: true
   },
   startTime: {
     type: Sequelize.DATE
@@ -18,3 +19,5 @@ const Event = sequelize.define('event', {
     type: Sequelize.BOOLEAN
   }
 });
+
+module.exports = Events;

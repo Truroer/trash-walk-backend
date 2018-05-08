@@ -4,7 +4,7 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const Badge = sequelize.define('badge', {
+const Badges = sequelize.define('badges', {
   achievements_id: {
     type: Sequelize.UUIDV4
   },
@@ -12,3 +12,5 @@ const Badge = sequelize.define('badge', {
     type: Sequelize.UUIDV4
   }
 });
+
+module.exports = Badges;

@@ -4,7 +4,7 @@ import sequelize from '../db';
 
 const Sequelize = require('sequelize');
 
-const User = sequelize.define('user', {
+const Users = sequelize.define('users', {
   user_id: {
     type: Sequelize.UUIDV4,
     primaryKey: true
@@ -22,3 +22,5 @@ const User = sequelize.define('user', {
     type: Sequelize.STRING
   }
 });
+
+module.exports = Users;

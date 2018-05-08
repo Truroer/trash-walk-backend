@@ -12,3 +12,5 @@ const Achievements = sequelize.define('achievements', {
     type: Sequelize.UUIDV4
   }
 });
+
+module.exports = Achievements;
