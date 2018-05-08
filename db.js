@@ -1,20 +1,22 @@
 'use strict';
 
-const { Client } = require('pg');
+const Sequelize = require('sequelize');
 require('dotenv').config();
 
 // Create the url based on the config file .env in the root directory
 const dbURI = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
-// Initialize postgres client and pool
-const client = new Client(dbURI);
+// Initialize connection
+const sequelize = new Sequelize(dbURI);
 
 // Connect to the DB
-client
-  .connect()
+sequelize
+  .authenticate()
   .then(() => {
-    console.log(`📚 Connected to ${client.database} at ${client.host}:${client.port}`);
+    console.log(`📚 Connection to database ${process.env.DB_NAME} at ${process.env.DB_HOST}:${process.env.DB_PORT} has been established successfully.`);
   })
-  .catch(e => console.log(e));
+  .catch((e) => {
+    console.error('❌ Unable to connect to the database:', e);
+  });
 
-module.exports = client;
+module.exports = sequelize;
