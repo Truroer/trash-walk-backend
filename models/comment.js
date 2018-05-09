@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     comments: DataTypes.STRING
   }, {});
   Comment.associate = (models) => {
-    Comment.belongsTo(models.participation, {
+    Comment.belongsTo(models.Participation, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false
