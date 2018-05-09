@@ -3,6 +3,7 @@
 const Koa = require('koa');
 const logger = require('koa-logger');
 const cors = require('koa-cors');
+const bodyParser = require('koa-body-parser');
 
 const router = require('./routes/index.js');
 const errorHandler = require('./middlewares/error.handler');
@@ -13,6 +14,7 @@ const app = new Koa();
 
 app
   .use(logger())
+  .use(bodyParser())
   .use(cors())
   .use(router.routes())
   .use(router.allowedMethods());

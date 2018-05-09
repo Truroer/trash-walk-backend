@@ -13,15 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   Participation.associate = (models) => {
     Participation.belongsTo(models.Event, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
     });
     Participation.belongsTo(models.User, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
     });
     Participation.hasMany(models.Comment);
     Participation.hasMany(models.Image);
