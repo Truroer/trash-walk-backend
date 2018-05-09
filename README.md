@@ -4,14 +4,14 @@
 
 ### Front-end:
 
-- React Native
-- Redux
+- [React Native](https://facebook.github.io/react-native/)
+- [Redux](https://redux.js.org/)
 
 ### Back-end: 
 
-- Koa
-- Postgres & PostGis
-- Sequelize
+- [Koa](https://koajs.com/)
+- [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
+- [Sequelize](http://docs.sequelizejs.com/)
 
 # Using Trash Walk - Server
 
@@ -21,10 +21,10 @@ After cloning the repo you'll have to :
 
 ### Install global and local dependancies:
 
-* Node: `brew install node`
-* Npm: `npm install`
-* Xcode
-* Homebrew
+* [Node](https://nodejs.org/en/): `brew install node`
+* [Npm](https://www.npmjs.com/): `npm install`
+* [Xcode](https://developer.apple.com/xcode/)
+* [Homebrew](https://brew.sh/)
 
 # Migrate and connect Postgres database
 
@@ -68,7 +68,7 @@ Finally, create the extension for PostGis:
 
 `trashwalk=# CREATE EXTENSION postgis;`
 
-always remember the semicolumn, or syntax wouldn't work.
+Always remember the semicolon or the syntax will not work.
 
 Now your database setup is finished and you are ready to connect it with the server. 
 
