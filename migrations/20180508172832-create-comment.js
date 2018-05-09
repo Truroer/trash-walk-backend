@@ -4,9 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Comments', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID
     },
     participation_id: {
       type: Sequelize.UUID,

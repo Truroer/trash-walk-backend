@@ -4,9 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Participations', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID
     },
     user_id: {
       type: Sequelize.UUID

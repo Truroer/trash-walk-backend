@@ -4,9 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Events', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID
     },
     startTime: {
       type: Sequelize.DATE

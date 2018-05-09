@@ -4,9 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Badges', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID
     },
     achievements_id: {
       type: Sequelize.UUID
