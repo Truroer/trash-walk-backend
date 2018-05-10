@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUID
       },
-      distance: DataTypes.FLOAT,
+      distance: DataTypes.INTEGER,
+      startTime: DataTypes.DATE,
+      endTime: DataTypes.DATE,
     },
     {},
   );

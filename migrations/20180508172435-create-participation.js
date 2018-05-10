@@ -23,10 +23,15 @@ module.exports = {
         model: 'Events',
         key: 'id',
       }
-
+    },
+    startTime: {
+      type: Sequelize.DATE
+    },
+    endTime: {
+      type: Sequelize.DATE
     },
     distance: {
-      type: Sequelize.FLOAT
+      type: Sequelize.INTEGER
     },
     createdAt: {
       allowNull: false,
