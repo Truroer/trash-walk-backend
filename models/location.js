@@ -4,8 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   const Location = sequelize.define(
     'Location',
     {
-      user_id: DataTypes.UUID,
-      event_id: DataTypes.UUID,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUID
+      },
       geography: DataTypes.GEOMETRY,
     },
     {},
@@ -13,15 +17,11 @@ module.exports = (sequelize, DataTypes) => {
   Location.associate = (models) => {
     Location.belongsTo(models.Event, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
+      foreignKey: 'EventId',
     });
     Location.belongsTo(models.User, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
+      foreignKey: 'UserId',
     });
   };
   return Location;

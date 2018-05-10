@@ -5,9 +5,10 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: Sequelize.UUID
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUID
     },
-    user_id: {
+    UserId: {
       type: Sequelize.UUID,
       onDelete: 'CASCADE',
       allowNull: false,
@@ -16,7 +17,7 @@ module.exports = {
         key: 'id'
       }
     },
-    event_id: {
+    EventId: {
       type: Sequelize.UUID,
       onDelete: 'CASCADE',
       allowNull: false,

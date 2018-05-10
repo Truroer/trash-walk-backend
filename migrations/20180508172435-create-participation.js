@@ -5,13 +5,25 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: Sequelize.UUID
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUID
     },
-    user_id: {
-      type: Sequelize.UUID
+    UserId: {
+      type: Sequelize.UUID,
+      onDelete: 'CASCADE',
+      references: {
+        model: 'Users',
+        key: 'id',
+      }
     },
-    event_id: {
-      type: Sequelize.UUID
+    EventId: {
+      type: Sequelize.UUID,
+      onDelete: 'CASCADE',
+      references: {
+        model: 'Events',
+        key: 'id',
+      }
+
     },
     distance: {
       type: Sequelize.FLOAT

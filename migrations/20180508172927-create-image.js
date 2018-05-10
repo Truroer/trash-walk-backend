@@ -5,9 +5,10 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: Sequelize.UUID
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUID
     },
-    participation_id: {
+    ParticipationId: {
       type: Sequelize.UUID,
       onDelete: 'CASCADE',
       allowNull: false,

@@ -1,16 +1,23 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  const Comment = sequelize.define('Comment', {
-    participation_id: DataTypes.UUID,
-    comments: DataTypes.STRING
-  }, {});
+  const Comment = sequelize.define(
+    'Comment',
+    {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUID
+      },
+      comments: DataTypes.STRING,
+    },
+    {},
+  );
   Comment.associate = (models) => {
     Comment.belongsTo(models.Participation, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false
-      }
+      foreignKey: 'ParticipationId',
     });
   };
   return Comment;

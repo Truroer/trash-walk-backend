@@ -4,7 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   const Image = sequelize.define(
     'Image',
     {
-      participation_id: DataTypes.UUID,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUID
+      },
       imageUrl: DataTypes.STRING,
     },
     {},
@@ -12,9 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   Image.associate = (models) => {
     Image.belongsTo(models.Participation, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
+      foreignKey: 'ParticipationId',
     });
   };
   return Image;

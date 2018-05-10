@@ -5,10 +5,8 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: Sequelize.UUID
-    },
-    achievements_id: {
-      type: Sequelize.UUID
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUID
     },
     badge: {
       type: Sequelize.STRING

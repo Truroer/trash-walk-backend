@@ -5,7 +5,8 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
-      type: Sequelize.UUID
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUID
     },
     firstName: {
       type: Sequelize.STRING
@@ -14,6 +15,8 @@ module.exports = {
       type: Sequelize.STRING
     },
     email: {
+      allowNull: false,
+      unique: true,
       type: Sequelize.STRING
     },
     token: {

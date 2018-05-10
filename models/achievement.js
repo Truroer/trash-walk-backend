@@ -4,8 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   const Achievement = sequelize.define(
     'Achievement',
     {
-      user_id: DataTypes.UUID,
-      badges_id: DataTypes.UUID,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUID
+      },
       date: DataTypes.DATE,
     },
     {},
@@ -13,15 +17,11 @@ module.exports = (sequelize, DataTypes) => {
   Achievement.associate = (models) => {
     Achievement.belongsTo(models.Badge, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
+      foreignKey: 'BadgeId',
     });
     Achievement.belongsTo(models.User, {
       onDelete: 'CASCADE',
-      foreignKey: {
-        allowNull: false,
-      },
+      foreignKey: 'UserId',
     });
   };
   return Achievement;

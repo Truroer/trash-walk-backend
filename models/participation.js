@@ -4,8 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   const Participation = sequelize.define(
     'Participation',
     {
-      user_id: DataTypes.UUID,
-      event_id: DataTypes.UUID,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUID
+      },
       distance: DataTypes.FLOAT,
     },
     {},
@@ -13,12 +17,20 @@ module.exports = (sequelize, DataTypes) => {
   Participation.associate = (models) => {
     Participation.belongsTo(models.Event, {
       onDelete: 'CASCADE',
+      foreignKey: 'EventId',
     });
     Participation.belongsTo(models.User, {
       onDelete: 'CASCADE',
+      foreignKey: 'UserId',
     });
-    Participation.hasMany(models.Comment);
-    Participation.hasMany(models.Image);
+    Participation.hasMany(models.Comment, {
+      foreignKey: 'ParticipationId',
+      onDelete: 'CASCADE'
+    });
+    Participation.hasMany(models.Image, {
+      foreignKey: 'ParticipationId',
+      onDelete: 'CASCADE'
+    });
   };
   return Participation;
 };
