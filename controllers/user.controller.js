@@ -29,7 +29,6 @@ module.exports.getUser = async (ctx, next) => {
     ],
   });
 
-
   ctx.body = `endpoint for getUser with parameter ${ctx.params.id}`;
   ctx.status = 200;
 };

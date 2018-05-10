@@ -16,8 +16,11 @@ module.exports.getEvent = async (ctx) => {
 
 module.exports.createEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
+
+  const { body } = ctx.request;
   let newEvent;
-  if (ctx.request.body) {
+
+  if (body.userId) {
     newEvent = await models.Event
       .create({
         id: uuid(),
@@ -27,10 +30,10 @@ module.exports.createEvent = async (ctx, next) => {
       .then(res => res.get({ plain: true }))
       .catch((e) => { throw new Error(e); });
 
-    models.Participation
+    await models.Participation
       .create({
         id: uuid(),
-        UserId: ctx.request.body.user_id,
+        UserId: body.userId,
         EventId: newEvent.id,
       })
       .then((res) => {
@@ -45,16 +48,39 @@ module.exports.createEvent = async (ctx, next) => {
     console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
-  return false;
 };
 
-module.exports.updateEvent = async (ctx) => {
-  try {
-    ctx.body = `endpoint for updateEvent with parameter ${ctx.params.id}`;
-    ctx.status = 200;
-  } catch (e) {
-    ctx.body = `An unexpected error occurred. ${e}`;
-    ctx.status = 400;
+module.exports.updateEvent = async (ctx, next) => {
+  if (ctx.method !== 'POST') return next();
+
+  const { body } = ctx.request;
+  let point;
+
+  if (body.lat && body.lng) {
+    point = {
+      type: 'Point',
+      coordinates: [body.lng, body.lat],
+      crs: { type: 'name', properties: { name: 'EPSG:4326' } }
+    };
+  } else {
+    return next();
+  }
+
+  if (body.userId && body.eventId) {
+    await models.Location
+      .create({
+        id: uuid(),
+        UserId: body.userId,
+        EventId: body.eventId,
+        geography: point,
+        timestamp: body.timestamp
+      })
+      .then(res => console.log('Created new location point: \n', res.get({ plain: true })))
+      .catch((e) => { throw new Error(e); });
+    ctx.status = 201;
+  } else {
+    console.log('The request body is mandatory on this request.');
+    ctx.status = 204;
   }
 };
 
