@@ -35,6 +35,7 @@ module.exports.createEvent = async (ctx, next) => {
         id: uuid(),
         UserId: body.userId,
         EventId: newEvent.id,
+        startTime: newEvent.startTime
       })
       .then((res) => {
         const newParticipation = res.get({ plain: true });
@@ -78,6 +79,55 @@ module.exports.updateEvent = async (ctx, next) => {
       .then(res => console.log('Created new location point: \n', res.get({ plain: true })))
       .catch((e) => { throw new Error(e); });
     ctx.status = 201;
+  } else {
+    console.log('The request body is mandatory on this request.');
+    ctx.status = 204;
+  }
+};
+
+module.exports.endEvent = async (ctx, next) => {
+  if (ctx.method !== 'POST') return next();
+
+  const { body } = ctx.request;
+
+  if (body.userId && body.eventId && body.distance && body.timestamp) {
+    await models.Participation
+      .update({
+        distance: body.distance,
+        endTime: body.timestamp
+      }, {
+        where: {
+          UserId: body.userId,
+          EventId: body.eventId
+        }
+      })
+      .then(res => console.log('Participation ended!'))
+      .catch((e) => { throw new Error(e); });
+
+    await models.Participation
+      .find({
+        where: {
+          EventId: body.eventId,
+          endTime: null
+        }
+      })
+      .then((res) => {
+        if (!res) {
+          models.Event
+            .update({
+              active: false
+            }, {
+              where: {
+                id: body.eventId
+              }
+            })
+            .then(() => console.log('Event closed!'))
+            .catch((e) => { throw new Error(e); });
+
+        }
+      })
+      .catch((e) => { throw new Error(e); });
+    ctx.status = 200;
   } else {
     console.log('The request body is mandatory on this request.');
     ctx.status = 204;
