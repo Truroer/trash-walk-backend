@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUID
       },
-      geography: DataTypes.GEOMETRY,
+      geography: DataTypes.GEOMETRY('POINT', 4326),
     },
     {},
   );

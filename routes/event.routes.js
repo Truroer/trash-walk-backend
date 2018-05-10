@@ -8,7 +8,7 @@ const controller = require('../controllers/event.controller');
 router
   .post('/', controller.createEvent)
   .get('/:id', controller.getEvent)
-  .put('/:id', controller.updateEvent)
+  .post('/update', controller.updateEvent)
   .delete('/:id', controller.deleteEvent);
 
 module.exports = router;
