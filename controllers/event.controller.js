@@ -25,19 +25,17 @@ module.exports.createEvent = async (ctx, next) => {
         active: true,
       })
       .then(res => res.get({ plain: true }))
-      .then((result) => {
-        models.Participation
-          .create({
-            id: uuid(),
-            user_id: ctx.request.body.user_id,
-            event_id: result.id,
-          })
-          .then((res) => {
-            const newParticipation = res.get({ plain: true });
-            console.log(`New partecipation created for user:${newParticipation.user_id} on the event ${newParticipation.event_id}`);
-          })
-          .catch((e) => { throw new Error(e); });
-        return result;
+      .catch((e) => { throw new Error(e); });
+
+    models.Participation
+      .create({
+        id: uuid(),
+        UserId: ctx.request.body.user_id,
+        EventId: newEvent.id,
+      })
+      .then((res) => {
+        const newParticipation = res.get({ plain: true });
+        console.log(`New partecipation created for user:${newParticipation.UserId} on the event ${newParticipation.EventId}`);
       })
       .catch((e) => { throw new Error(e); });
 
