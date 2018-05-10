@@ -29,6 +29,9 @@ module.exports = {
     geography: {
       type: Sequelize.GEOMETRY
     },
+    timestamp: {
+      type: Sequelize.DATE
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

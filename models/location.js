@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUID
       },
       geography: DataTypes.GEOMETRY('POINT', 4326),
+      timestamp: DataTypes.DATE,
     },
     {},
   );
