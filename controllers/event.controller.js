@@ -45,11 +45,7 @@ module.exports.getEvent = async (ctx, next) => {
       .catch((e) => {
         throw new Error(e);
       });
-
-    // ctx.body = {
-    //   participation: userParticipation,
-    //   event: 
-    // }
+    
     ctx.body = userParticipationLocations;
     ctx.status = 200;
   } else {
@@ -90,6 +86,32 @@ module.exports.createEvent = async (ctx, next) => {
       });
 
     ctx.body = newEvent;
+    ctx.status = 201;
+  } else {
+    console.log('The request body is mandatory on this request.');
+    ctx.status = 204;
+  }
+};
+
+module.exports.joinEvent = async (ctx, next) => {
+  if (ctx.method !== 'POST') return next();
+
+  const { body } = ctx.request;
+
+  if (body.userId && body.eventId && body.startTime) {
+    await models.Participation
+      .create({
+        id: uuid(),
+        UserId: body.userId,
+        EventId: body.eventId,
+        startTime: body.startTime,
+      })
+      .then(() => {
+        console.log(`Participation for user: ${body.userId} on the event: ${body.eventId}`);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -138,19 +160,21 @@ module.exports.endEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
   const { body } = ctx.request;
+  let participationId;
 
-  if (body.userId && body.eventId && body.distance && body.timestamp) {
+  if (body.userId && body.eventId && body.distance && body.endTime) {
     await models.Participation
       .update(
         {
           distance: body.distance,
-          endTime: body.timestamp,
+          endTime: body.endTime,
         },
         {
           where: {
             UserId: body.userId,
             EventId: body.eventId,
           },
+          returning: true,
         },
       )
       .then((res) => {
@@ -160,12 +184,52 @@ module.exports.endEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    participationId = await models.Participation
+      .find({
+        where: {
+          UserId: body.userId,
+          EventId: body.eventId,
+        },
+        attributes: ['id']
+      });
+    participationId = participationId.dataValues.id;
+
     updateEventStatus(body);
 
     ctx.status = 200;
   } else {
     console.log('The request body is mandatory on this request.');
     ctx.status = 204;
+  }
+
+  if (body.comments) {
+    await models.Comment
+      .create({
+        id: uuid(),
+        ParticipationId: participationId,
+        comments: body.comments
+      })
+      .then(() => {
+        console.log(`Comment added for the participation: ${participationId}`);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
+  }
+
+  if (body.imageUrl) {
+    await models.Image
+      .create({
+        id: uuid(),
+        ParticipationId: participationId,
+        imageUrl: body.imageUrl,
+      })
+      .then(() => {
+        console.log(`Images added for the participation: ${participationId}`);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
   }
 };
 

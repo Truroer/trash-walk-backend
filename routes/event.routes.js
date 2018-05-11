@@ -9,6 +9,7 @@ router
   .post('/', controller.createEvent)
   .post('/update', controller.updateEvent)
   .post('/end', controller.endEvent)
+  .post('/join', controller.joinEvent)
   .get('/', controller.getEvent)
   .delete('/', controller.deleteEvent);
 
