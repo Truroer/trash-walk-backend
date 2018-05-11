@@ -9,7 +9,7 @@ router
   .post('/', controller.createEvent)
   .post('/update', controller.updateEvent)
   .post('/end', controller.endEvent)
-  .get('/:id', controller.getEvent)
-  .delete('/:id', controller.deleteEvent);
+  .get('/', controller.getEvent)
+  .delete('/', controller.deleteEvent);
 
 module.exports = router;

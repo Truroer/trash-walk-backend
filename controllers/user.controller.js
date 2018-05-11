@@ -35,26 +35,33 @@ module.exports.getUser = async (ctx, next) => {
 
 module.exports.createUser = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
+
+  const { body } = ctx.request;
   let newUser;
-  if (ctx.request.body.email) {
+
+  if (body.email) {
     newUser = await models.User
       .create({
         id: uuid(),
-        firstName: ctx.request.body.firstName,
-        lastName: ctx.request.body.lastName,
-        email: ctx.request.body.email,
-        token: ctx.request.body.token,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        token: body.token,
       })
       .then(res => res.get({ plain: true }))
       .catch((e) => { throw new Error(e); });
 
-    ctx.body = newUser;
+    ctx.body = {
+      ...newUser,
+      badges: [],
+      participations: [],
+      stats: {},
+    };
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
+    console.log('The email field is mandatory on this request.');
     ctx.status = 204;
   }
-  return false;
 };
 
 module.exports.updateUser = async (ctx) => {
