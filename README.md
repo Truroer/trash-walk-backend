@@ -30,11 +30,14 @@ After cloning the repo you'll have to :
 
 Install PostGres and PostGis on your machine:
 
-`$brew install postgres && install postgis`
+```bash
+$ brew install postgres
+$ brew install postgis
+```
 
 Access postgres command line on the default database postgres:
 
-`$psql postgres`
+`$ psql postgres`
 
 You should see on your bash a screen like this:
 
