@@ -1,9 +1,11 @@
 'use strict';
+
 const sequelize = require('sequelize');
 const uuid = require('uuid');
 
 const models = require('../models');
 
+// Get info about a specific event
 module.exports.getEvent = async (ctx, next) => {
   if (ctx.method !== 'GET') return next();
 
@@ -45,7 +47,7 @@ module.exports.getEvent = async (ctx, next) => {
       .catch((e) => {
         throw new Error(e);
       });
-    
+
     ctx.body = userParticipationLocations;
     ctx.status = 200;
   } else {
@@ -54,6 +56,7 @@ module.exports.getEvent = async (ctx, next) => {
   }
 };
 
+// Create a new event
 module.exports.createEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
@@ -61,6 +64,7 @@ module.exports.createEvent = async (ctx, next) => {
   let newEvent;
 
   if (body.userId) {
+    // Create the new event in the Event table
     newEvent = await models.Event.create({
       id: uuid(),
       startTime: Date.now(),
@@ -71,6 +75,7 @@ module.exports.createEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    // Create a new participation into Participation table for the new event created
     await models.Participation.create({
       id: uuid(),
       UserId: body.userId,
@@ -85,6 +90,7 @@ module.exports.createEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    // Return the event instance after creation
     ctx.body = newEvent;
     ctx.status = 201;
   } else {
@@ -93,12 +99,14 @@ module.exports.createEvent = async (ctx, next) => {
   }
 };
 
+// Join an existing event
 module.exports.joinEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
   const { body } = ctx.request;
 
   if (body.userId && body.eventId && body.startTime) {
+    // Create a new participation for a pre-existing event
     await models.Participation
       .create({
         id: uuid(),
@@ -112,6 +120,7 @@ module.exports.joinEvent = async (ctx, next) => {
       .catch((e) => {
         throw new Error(e);
       });
+
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -119,12 +128,14 @@ module.exports.joinEvent = async (ctx, next) => {
   }
 };
 
+// Add locations update lo Location table during an event
 module.exports.updateEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
   const { body } = ctx.request;
   let point;
 
+  // Create the geom Point based on lat and lng
   if (body.lat && body.lng) {
     point = {
       type: 'Point',
@@ -136,6 +147,7 @@ module.exports.updateEvent = async (ctx, next) => {
   }
 
   if (body.userId && body.eventId) {
+    // Create a new location point related to the participation into Location table
     await models.Location.create({
       id: uuid(),
       UserId: body.userId,
@@ -156,6 +168,7 @@ module.exports.updateEvent = async (ctx, next) => {
   }
 };
 
+// End your participation to an event
 module.exports.endEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
@@ -163,6 +176,7 @@ module.exports.endEvent = async (ctx, next) => {
   let participationId;
 
   if (body.userId && body.eventId && body.distance && body.endTime) {
+    // Update the participation status on the event end
     await models.Participation
       .update(
         {
@@ -184,6 +198,7 @@ module.exports.endEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    // Get the participationId to append Images and Comments in next tables
     participationId = await models.Participation
       .find({
         where: {
@@ -194,6 +209,7 @@ module.exports.endEvent = async (ctx, next) => {
       });
     participationId = participationId.dataValues.id;
 
+    // Update the event status
     updateEventStatus(body);
 
     ctx.status = 200;
@@ -202,6 +218,7 @@ module.exports.endEvent = async (ctx, next) => {
     ctx.status = 204;
   }
 
+  // If is passed, create an instance for comments related to the participation
   if (body.comments) {
     await models.Comment
       .create({
@@ -217,6 +234,7 @@ module.exports.endEvent = async (ctx, next) => {
       });
   }
 
+  // If is passed, create an instance for images related to the participation
   if (body.imageUrl) {
     await models.Image
       .create({
@@ -233,12 +251,14 @@ module.exports.endEvent = async (ctx, next) => {
   }
 };
 
+// Cancel your participation to an event
 module.exports.deleteEvent = async (ctx, next) => {
   if (ctx.method !== 'DELETE') return next();
 
   const { body } = ctx.request;
 
   if (body.userId && body.eventId) {
+    // Remove the participation instance from the participation table
     await models.Participation
       .destroy({
         where: {
@@ -253,6 +273,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    // Remove locations related to the deleted participation
     await models.Location
       .destroy({
         where: {
@@ -267,6 +288,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         throw new Error(e);
       });
 
+    // Update the event status
     updateEventStatus(body);
 
     ctx.status = 200;
@@ -276,6 +298,7 @@ module.exports.deleteEvent = async (ctx, next) => {
   }
 };
 
+// Function to check and update the status of an event
 const updateEventStatus = async (body) => {
   await models.Participation
     .find({
