@@ -40,6 +40,7 @@ module.exports.createUser = async (ctx, next) => {
   let newUser;
 
   if (body.email) {
+    // Create new user on User table
     newUser = await models.User
       .create({
         id: uuid(),
@@ -61,25 +62,5 @@ module.exports.createUser = async (ctx, next) => {
   } else {
     console.log('The email field is mandatory on this request.');
     ctx.status = 204;
-  }
-};
-
-module.exports.updateUser = async (ctx) => {
-  try {
-    ctx.body = `endpoint for updateUser with parameter ${ctx.params.id}`;
-    ctx.status = 200;
-  } catch (e) {
-    ctx.body = `An unexpected error occurred. ${e}`;
-    ctx.status = 400;
-  }
-};
-
-module.exports.deleteUser = async (ctx) => {
-  try {
-    ctx.body = `endpoint for deleteUser with parameter ${ctx.params.id}`;
-    ctx.status = 200;
-  } catch (e) {
-    ctx.body = `An unexpected error occurred. ${e}`;
-    ctx.status = 400;
   }
 };
