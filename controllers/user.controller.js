@@ -1,7 +1,7 @@
 'use strict';
 
+const sequelize = require('sequelize');
 const uuid = require('uuid');
-
 const models = require('../models');
 
 module.exports.getUser = async (ctx, next) => {
