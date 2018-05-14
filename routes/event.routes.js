@@ -7,8 +7,10 @@ const controller = require('../controllers/event.controller');
 // Create routes for events
 router
   .post('/', controller.createEvent)
-  .get('/:id', controller.getEvent)
-  .put('/:id', controller.updateEvent)
-  .delete('/:id', controller.deleteEvent);
+  .post('/update', controller.updateEvent)
+  .post('/end', controller.endEvent)
+  .post('/join', controller.joinEvent)
+  .get('/', controller.getEvent)
+  .delete('/', controller.deleteEvent);
 
 module.exports = router;
