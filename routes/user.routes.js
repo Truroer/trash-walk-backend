@@ -7,6 +7,6 @@ const controller = require('../controllers/user.controller');
 // Create routes for users
 router
   .post('/', controller.createUser)
-  .get('/:id', controller.getUser);
+  .get('/:userId', controller.getUser);
 
 module.exports = router;

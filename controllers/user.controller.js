@@ -7,30 +7,88 @@ const models = require('../models');
 module.exports.getUser = async (ctx, next) => {
   if (ctx.method !== 'GET') return next();
 
-  const userInfo = await User.findOne({
-    where: { user_id: ctx.params.id },
-  });
+  const { userId } = ctx.params;
 
-  const userParticipations = await Participation.findAll({
-    include: [
-      {
-        model: User,
-        where: { user_id: Sequelize.col('participations.user_id') },
-      },
-    ],
-  });
+  if (userId) {
+    const userInfo = await models.User
+      .findOne({
+        where: {
+          id: userId,
+        },
+      })
+      .then(res => res)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  const userAchievements = await Achievement.findAll({
-    include: [
-      {
-        model: User,
-        where: { user_id: Sequelize.col('achievements.user_id') },
-      },
-    ],
-  });
+    const badges = await models.Achievement
+      .findAll({
+        where: {
+          UserId: userId
+        }
+      })
+      .then(res => res)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  ctx.body = `endpoint for getUser with parameter ${ctx.params.id}`;
-  ctx.status = 200;
+    const participations = await models.Participation
+      .findAll({
+        where: {
+          UserId: userId
+        }
+      })
+      .then(res => res)
+      .catch((e) => {
+        throw new Error(e);
+      });
+
+    // const userTotalTime = await models.Participation
+    //   .findAll({
+    //     where: {
+    //       UserId: userId
+    //     },
+    //     group: ['UserId'],
+    //     attributes: [[sequelize.literal('EXTRACT (EPOCH FROM ("endTime" - "startTime"))::integer/60 FROM "Participations"'), 'timeDiff']],
+    //     // attributes: ['startTime', 'endTime', [sequelize.literal('extract(epoch from (startTime - endTime))::intefer/60 AS timeDifference')],
+    //   })
+    //   .then(res => console.log(res))
+    //   .catch((e) => {
+    //     throw new Error(e);
+    //   });
+
+    const userTotalDistance = await models.Participation
+      .findAll({
+        where: {
+          UserId: userId
+        },
+        group: ['UserId'],
+        attributes: [[sequelize.fn('sum', sequelize.col('distance')), 'totalDistance']],
+      })
+      .then(res => res[0].dataValues.totalDistance)
+      .catch((e) => {
+        throw new Error(e);
+      });
+
+    // const userTotalArea =
+
+    const stats = {
+      // totalTime: userTotalTime,
+      // totalArea: userTotalArea,
+      totalDistance: userTotalDistance,
+    };
+
+    ctx.body = {
+      userInfo,
+      badges,
+      participations,
+      stats,
+    };
+    ctx.status = 200;
+  } else {
+    console.log('The user is mandatory on this request.');
+    ctx.status = 200;
+  }
 };
 
 // Create a new user
