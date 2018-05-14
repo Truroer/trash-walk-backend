@@ -33,6 +33,7 @@ module.exports.getUser = async (ctx, next) => {
   ctx.status = 200;
 };
 
+// Create a new user
 module.exports.createUser = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 

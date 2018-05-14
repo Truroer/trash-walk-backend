@@ -1,6 +1,7 @@
+
 'use strict';
 
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const uuid = require('uuid');
 
 const models = require('../models');
@@ -16,34 +17,29 @@ module.exports.getEvent = async (ctx, next) => {
   let eventLocations;
 
   if (query.userId && query.eventId) {
-    userParticipation = await models.Participation
-      .find({
-        where: {
-          UserId: query.userId,
-          EventId: query.eventId
-        },
-      })
-      .then(res => res.get({ plain: true }))
+    userParticipation = await models.Participation.find({
+      where: {
+        UserId: query.userId,
+        EventId: query.eventId,
+      },
+    })
+      .then((res) => res.get({ plain: true }))
       .catch((e) => {
         throw new Error(e);
       });
 
-    userParticipationLocations = await models.Location
-      .findAll({
-        where: {
-          UserId: query.userId,
-          EventId: query.eventId
-        },
-        order: [
-          ['UserId', 'ASC'],
-          ['timestamp', 'ASC']
-        ],
-        attributes: [
-          [sequelize.fn('ST_AsGeoJSON', sequelize.col('geography')), 'geography'],
-          'timestamp'
-        ]
-      })
-      .then(res => res)
+    userParticipationLocations = await models.Location.findAll({
+      where: {
+        UserId: query.userId,
+        EventId: query.eventId,
+      },
+      order: [['UserId', 'ASC'], ['timestamp', 'ASC']],
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography'],
+        'timestamp',
+      ],
+    })
+      .then((res) => res)
       .catch((e) => {
         throw new Error(e);
       });
@@ -84,7 +80,8 @@ module.exports.createEvent = async (ctx, next) => {
     })
       .then((res) => {
         const newParticipation = res.get({ plain: true });
-        console.log(`New partecipation created for user:${newParticipation.UserId} on the event ${newParticipation.EventId}`);
+        console.log(`New partecipation created for user:${newParticipation.UserId}
+        on the event ${newParticipation.EventId}`);
       })
       .catch((e) => {
         throw new Error(e);
@@ -107,15 +104,15 @@ module.exports.joinEvent = async (ctx, next) => {
 
   if (body.userId && body.eventId && body.startTime) {
     // Create a new participation for a pre-existing event
-    await models.Participation
-      .create({
-        id: uuid(),
-        UserId: body.userId,
-        EventId: body.eventId,
-        startTime: body.startTime,
-      })
+    await models.Participation.create({
+      id: uuid(),
+      UserId: body.userId,
+      EventId: body.eventId,
+      startTime: body.startTime,
+    })
       .then(() => {
-        console.log(`Participation for user: ${body.userId} on the event: ${body.eventId}`);
+        console.log(`Participation for user: ${body.userId} 
+          on the event: ${body.eventId}`);
       })
       .catch((e) => {
         throw new Error(e);
@@ -177,20 +174,19 @@ module.exports.endEvent = async (ctx, next) => {
 
   if (body.userId && body.eventId && body.distance && body.endTime) {
     // Update the participation status on the event end
-    await models.Participation
-      .update(
-        {
-          distance: body.distance,
-          endTime: body.endTime,
+    await models.Participation.update(
+      {
+        distance: body.distance,
+        endTime: body.endTime,
+      },
+      {
+        where: {
+          UserId: body.userId,
+          EventId: body.eventId,
         },
-        {
-          where: {
-            UserId: body.userId,
-            EventId: body.eventId,
-          },
-          returning: true,
-        },
-      )
+        returning: true,
+      },
+    )
       .then((res) => {
         console.log('Participation ended!');
       })
@@ -199,14 +195,13 @@ module.exports.endEvent = async (ctx, next) => {
       });
 
     // Get the participationId to append Images and Comments in next tables
-    participationId = await models.Participation
-      .find({
-        where: {
-          UserId: body.userId,
-          EventId: body.eventId,
-        },
-        attributes: ['id']
-      });
+    participationId = await models.Participation.find({
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+      attributes: ['id'],
+    });
     participationId = participationId.dataValues.id;
 
     // Update the event status
@@ -220,12 +215,11 @@ module.exports.endEvent = async (ctx, next) => {
 
   // If is passed, create an instance for comments related to the participation
   if (body.comments) {
-    await models.Comment
-      .create({
-        id: uuid(),
-        ParticipationId: participationId,
-        comments: body.comments
-      })
+    await models.Comment.create({
+      id: uuid(),
+      ParticipationId: participationId,
+      comments: body.comments,
+    })
       .then(() => {
         console.log(`Comment added for the participation: ${participationId}`);
       })
@@ -236,12 +230,11 @@ module.exports.endEvent = async (ctx, next) => {
 
   // If is passed, create an instance for images related to the participation
   if (body.imageUrl) {
-    await models.Image
-      .create({
-        id: uuid(),
-        ParticipationId: participationId,
-        imageUrl: body.imageUrl,
-      })
+    await models.Image.create({
+      id: uuid(),
+      ParticipationId: participationId,
+      imageUrl: body.imageUrl,
+    })
       .then(() => {
         console.log(`Images added for the participation: ${participationId}`);
       })
@@ -259,13 +252,12 @@ module.exports.deleteEvent = async (ctx, next) => {
 
   if (body.userId && body.eventId) {
     // Remove the participation instance from the participation table
-    await models.Participation
-      .destroy({
-        where: {
-          UserId: body.userId,
-          EventId: body.eventId
-        }
-      })
+    await models.Participation.destroy({
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+    })
       .then(() => {
         console.log('Participation deleted');
       })
@@ -274,15 +266,15 @@ module.exports.deleteEvent = async (ctx, next) => {
       });
 
     // Remove locations related to the deleted participation
-    await models.Location
-      .destroy({
-        where: {
-          UserId: body.userId,
-          EventId: body.eventId
-        }
-      })
+    await models.Location.destroy({
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+    })
       .then(() => {
-        console.log(`Locations for the user:${body.userId} on the event ${body.eventId} deleted!`);
+        console.log(`Locations for the user:${body.userId} 
+          on the event ${body.eventId} deleted!`);
       })
       .catch((e) => {
         throw new Error(e);
@@ -300,27 +292,25 @@ module.exports.deleteEvent = async (ctx, next) => {
 
 // Function to check and update the status of an event
 const updateEventStatus = async (body) => {
-  await models.Participation
-    .find({
-      where: {
-        EventId: body.eventId,
-        endTime: null,
-      },
-    })
+  await models.Participation.find({
+    where: {
+      EventId: body.eventId,
+      endTime: null,
+    },
+  })
     .then((res) => {
       if (!res) {
-        models.Event
-          .update(
-            {
-              active: false,
-              endTime: Date.now()
+        models.Event.update(
+          {
+            active: false,
+            endTime: Date.now(),
+          },
+          {
+            where: {
+              id: body.eventId,
             },
-            {
-              where: {
-                id: body.eventId,
-              },
-            },
-          )
+          },
+        )
           .then(() => console.log('Event closed!'))
           .catch((e) => {
             throw new Error(e);
