@@ -104,20 +104,18 @@ module.exports.joinEvent = async (ctx, next) => {
 
   if (body.userId && body.eventId && body.startTime) {
     // Create a new participation for a pre-existing event
-    await models.Participation.create({
+    const participation = await models.Participation.create({
       id: uuid(),
       UserId: body.userId,
       EventId: body.eventId,
       startTime: body.startTime,
     })
-      .then(() => {
-        console.log(`Participation for user: ${body.userId} 
-          on the event: ${body.eventId}`);
-      })
+      .then(res => res.get({ plain: true }))
       .catch((e) => {
         throw new Error(e);
       });
 
+    ctx.body = { id: participation.EventId };
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -242,6 +240,22 @@ module.exports.endEvent = async (ctx, next) => {
       .catch((e) => {
         throw new Error(e);
       });
+  }
+
+  if (body.userId && body.eventId) {
+    const points = await models.Location.findAll({
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.fn('ST_Buffer', Sequelize.fn('ST_MakeLine', Sequelize.col('geography')), 0.000045)), 'MyLine']
+      ],
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+    });
+
+    // IMPLEMENT QUERY TO ADD POLYGON ON PARTICIPATION TABLE!
+    // TEST MULTILINE INTERSECTION
+    ctx.body = points[0].get({ plain: true });
   }
 };
 

@@ -15,17 +15,20 @@ module.exports.getEvents = async (ctx, next) => {
     const distance = Sequelize.fn('ST_DistanceSphere', Sequelize.col('geography'), currentLocation);
 
     const closestLocations = await models.Location.findAll({
-      attributes: [[Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography']],
-      order: distance,
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography'],
+        // [Sequelize.fn('DISTINCT', Sequelize.col('EventId')), 'EventId']
+      ],
       where: Sequelize.where(distance, { $lte: radius }),
-      group: ['Location.EventId', 'Location.id', 'Event.id'],
+      order: [['timestamp', 'ASC']],
+      // group: ['Location.EventId', 'Location.id', 'Event.id'],
       // having: ['count(EventId) > 1'],
       include: [{
         model: models.Event,
         where: {
           active: true
         },
-        attributes: ['id', 'startTime'],
+        attributes: ['id', 'startTime', 'active'],
       }],
     })
       .then(res => res)
