@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUID
       },
-      distance: DataTypes.INTEGER,
+      distance: DataTypes.FLOAT,
+      area: DataTypes.FLOAT,
+      shape: DataTypes.GEOMETRY('POLYGON', 4326),
       startTime: DataTypes.DATE,
       endTime: DataTypes.DATE,
     },

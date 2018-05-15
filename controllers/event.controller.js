@@ -216,7 +216,26 @@ module.exports.endEvent = async (ctx, next) => {
               0.000045,
             ),
           ),
-          'MyLine',
+          'Line',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Area',
+            Sequelize.fn(
+              'ST_Buffer',
+              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+              0.000045,
+            ), true
+          ),
+          'Area',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Length',
+            Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+            true
+          ),
+          'Distance',
         ]
       ],
       where: {

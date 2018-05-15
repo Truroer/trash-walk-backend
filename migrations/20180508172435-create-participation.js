@@ -31,7 +31,13 @@ module.exports = {
       type: Sequelize.DATE
     },
     distance: {
-      type: Sequelize.INTEGER
+      type: Sequelize.FLOAT
+    },
+    area: {
+      type: Sequelize.FLOAT
+    },
+    shape: {
+      type: Sequelize.GEOMETRY
     },
     createdAt: {
       allowNull: false,
