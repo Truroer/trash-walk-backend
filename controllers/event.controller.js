@@ -23,10 +23,6 @@ module.exports.getEvent = async (ctx, next) => {
         EventId: query.eventId,
       },
     })
-      .then((res) => res.get({ plain: true }))
-      .catch((e) => {
-        throw new Error(e);
-      });
 
     userParticipationLocations = await models.Location.findAll({
       where: {
@@ -136,6 +132,82 @@ module.exports.updateEvent = async (ctx, next) => {
       timestamp: body.timestamp,
     });
 
+    // Compute Shape, Area and Distance based on coords
+    let geometry = await models.Location.findAll({
+      attributes: [
+        [
+          Sequelize.fn(
+            'ST_AsGeoJSON',
+            Sequelize.fn(
+              'ST_Buffer',
+              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+              0.000045,
+            ),
+          ),
+          'Shape',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Area',
+            Sequelize.fn(
+              'ST_Buffer',
+              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+              0.000045,
+            ), true
+          ),
+          'Area',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Length',
+            Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+            true
+          ),
+          'Distance',
+        ]
+      ],
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+    });
+    geometry = geometry[0].dataValues;
+
+    // Update Participation with Shape, Area and Distance
+    await models.Participation.update(
+      {
+        shape: JSON.parse(geometry.Shape),
+        area: geometry.Area,
+        distance: geometry.Distance
+      },
+      {
+        where: {
+          UserId: body.userId,
+          EventId: body.eventId,
+        }
+      },
+    );
+
+    // Get the participationId to append Images and Comments in next tables
+    const participationDetail = await models.Participation.find({
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        'distance',
+        'area',
+        'id',
+        'startTime',
+        'endTime',
+        'EventId',
+        'UserId',
+      ]
+    });
+
+    console.log(participationDetail.get({plain:true}));
+    ctx.body = participationDetail;
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -203,51 +275,6 @@ module.exports.endEvent = async (ctx, next) => {
       imageUrl: body.imageUrl,
     });
   }
-
-  if (body.userId && body.eventId) {
-    const points = await models.Location.findAll({
-      attributes: [
-        [
-          Sequelize.fn(
-            'ST_AsGeoJSON',
-            Sequelize.fn(
-              'ST_Buffer',
-              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
-              0.000045,
-            ),
-          ),
-          'Line',
-        ],
-        [
-          Sequelize.fn(
-            'ST_Area',
-            Sequelize.fn(
-              'ST_Buffer',
-              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
-              0.000045,
-            ), true
-          ),
-          'Area',
-        ],
-        [
-          Sequelize.fn(
-            'ST_Length',
-            Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
-            true
-          ),
-          'Distance',
-        ]
-      ],
-      where: {
-        UserId: body.userId,
-        EventId: body.eventId,
-      },
-    });
-
-    // IMPLEMENT QUERY TO ADD POLYGON ON PARTICIPATION TABLE!
-    // TEST MULTILINE INTERSECTION
-    ctx.body = points[0].get({ plain: true });
-  }
 };
 
 // Cancel your participation to an event
@@ -263,13 +290,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
-    })
-      .then(() => {
-        console.log('Participation deleted');
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
 
     // Remove locations related to the deleted participation
     await models.Location.destroy({
@@ -277,14 +298,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
-    })
-      .then(() => {
-        console.log(`Locations for the user:${body.userId} 
-          on the event ${body.eventId} deleted!`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
 
     // Update the event status
     updateEventStatus(body);

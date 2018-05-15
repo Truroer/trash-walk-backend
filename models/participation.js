@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       distance: DataTypes.FLOAT,
       area: DataTypes.FLOAT,
-      shape: DataTypes.GEOMETRY('POLYGON', 4326),
+      shape: DataTypes.GEOMETRY('POLYGON'),
       startTime: DataTypes.DATE,
       endTime: DataTypes.DATE,
     },
