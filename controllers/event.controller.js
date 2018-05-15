@@ -11,40 +11,55 @@ module.exports.getEvent = async (ctx, next) => {
   if (ctx.method !== 'GET') return next();
 
   const { query } = ctx.request;
-  let userParticipation;
-  let userParticipationLocations;
-  let event;
-  let eventLocations;
 
   if (query.userId && query.eventId) {
-    userParticipation = await models.Participation.find({
+    // Get the participationId to append Images and Comments in next tables
+    const participationDetail = await models.Participation.find({
       where: {
         UserId: query.userId,
         EventId: query.eventId,
       },
-    })
-
-    userParticipationLocations = await models.Location.findAll({
-      where: {
-        UserId: query.userId,
-        EventId: query.eventId,
-      },
-      order: [['UserId', 'ASC'], ['timestamp', 'ASC']],
       attributes: [
-        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography'],
-        'timestamp',
-      ],
-    })
-      .then((res) => res)
-      .catch((e) => {
-        throw new Error(e);
-      });
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        'distance',
+        'area',
+        'id',
+        'startTime',
+        'endTime',
+        'EventId',
+        'UserId',
+      ]
+    });
 
-    ctx.body = userParticipationLocations;
+    const eventStats = await models.Participation.findAll({
+      where: {
+        EventId: query.eventId,
+      },
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.fn('ST_Union', Sequelize.col('shape'))), 'shape'],
+        [Sequelize.fn('SUM', Sequelize.col('distance')), 'distance'],
+        [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants'],
+        [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'area']
+      ]
+    });
+
+    const eventDetail = await models.Event.findAll({
+      where: {
+        id: query.eventId,
+      }
+    });
+
+    ctx.body = {
+      participation: participationDetail,
+      event: {
+        ...eventStats[0].dataValues,
+        ...eventDetail[0].dataValues,
+      },
+    };
     ctx.status = 200;
   } else {
-    console.log('The request body is mandatory on this request.');
-    ctx.status = 200;
+    console.log('The queries are mandatory on this request.');
+    ctx.status = 204;
   }
 };
 
@@ -206,7 +221,6 @@ module.exports.updateEvent = async (ctx, next) => {
       ]
     });
 
-    console.log(participationDetail.get({plain:true}));
     ctx.body = participationDetail;
     ctx.status = 201;
   } else {
