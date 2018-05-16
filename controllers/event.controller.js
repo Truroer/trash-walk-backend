@@ -58,10 +58,14 @@ module.exports.getEvent = async (ctx, next) => {
     });
 
     ctx.body = {
-      participation: participationDetail,
+      participation: {
+        ...participationDetail.dataValues,
+        shape: JSON.parse(participationDetail.dataValues.shape).coordinates,
+      },
       event: {
         ...eventStats[0].dataValues,
         ...eventDetail[0].dataValues,
+        shape: JSON.parse(eventStats[0].dataValues.shape).coordinates,
       },
     };
     ctx.status = 200;
@@ -229,7 +233,10 @@ module.exports.updateEvent = async (ctx, next) => {
       ]
     });
 
-    ctx.body = participationDetail;
+    ctx.body = {
+      ...participationDetail.dataValues,
+      shape: JSON.parse(participationDetail.dataValues.shape).coordinates,
+    };
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
