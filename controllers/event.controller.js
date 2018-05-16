@@ -11,44 +11,55 @@ module.exports.getEvent = async (ctx, next) => {
   if (ctx.method !== 'GET') return next();
 
   const { query } = ctx.request;
-  let userParticipation;
-  let userParticipationLocations;
-  let event;
-  let eventLocations;
 
   if (query.userId && query.eventId) {
-    userParticipation = await models.Participation.find({
+    // Get the participationId to append Images and Comments in next tables
+    const participationDetail = await models.Participation.find({
       where: {
         UserId: query.userId,
         EventId: query.eventId,
       },
-    })
-      .then((res) => res.get({ plain: true }))
-      .catch((e) => {
-        throw new Error(e);
-      });
-
-    userParticipationLocations = await models.Location.findAll({
-      where: {
-        UserId: query.userId,
-        EventId: query.eventId,
-      },
-      order: [['UserId', 'ASC'], ['timestamp', 'ASC']],
       attributes: [
-        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography'],
-        'timestamp',
-      ],
-    })
-      .then((res) => res)
-      .catch((e) => {
-        throw new Error(e);
-      });
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        'distance',
+        'area',
+        'id',
+        'startTime',
+        'endTime',
+        'EventId',
+        'UserId',
+      ]
+    });
 
-    ctx.body = userParticipationLocations;
+    const eventStats = await models.Participation.findAll({
+      where: {
+        EventId: query.eventId,
+      },
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.fn('ST_Union', Sequelize.col('shape'))), 'shape'],
+        [Sequelize.fn('SUM', Sequelize.col('distance')), 'distance'],
+        [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants'],
+        [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'area']
+      ]
+    });
+
+    const eventDetail = await models.Event.findAll({
+      where: {
+        id: query.eventId,
+      }
+    });
+
+    ctx.body = {
+      participation: participationDetail,
+      event: {
+        ...eventStats[0].dataValues,
+        ...eventDetail[0].dataValues,
+      },
+    };
     ctx.status = 200;
   } else {
-    console.log('The request body is mandatory on this request.');
-    ctx.status = 200;
+    console.log('The queries are mandatory on this request.');
+    ctx.status = 204;
   }
 };
 
@@ -57,19 +68,15 @@ module.exports.createEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
 
   const { body } = ctx.request;
-  let newEvent;
 
   if (body.userId) {
     // Create the new event in the Event table
-    newEvent = await models.Event.create({
+    let newEvent = await models.Event.create({
       id: uuid(),
       startTime: Date.now(),
       active: true,
-    })
-      .then(res => res.get({ plain: true }))
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
+    newEvent = newEvent.get({ plain: true });
 
     // Create a new participation into Participation table for the new event created
     await models.Participation.create({
@@ -77,15 +84,7 @@ module.exports.createEvent = async (ctx, next) => {
       UserId: body.userId,
       EventId: newEvent.id,
       startTime: newEvent.startTime,
-    })
-      .then((res) => {
-        const newParticipation = res.get({ plain: true });
-        console.log(`New partecipation created for user:${newParticipation.UserId}
-        on the event ${newParticipation.EventId}`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
 
     // Return the event instance after creation
     ctx.body = newEvent;
@@ -104,20 +103,15 @@ module.exports.joinEvent = async (ctx, next) => {
 
   if (body.userId && body.eventId && body.startTime) {
     // Create a new participation for a pre-existing event
-    await models.Participation.create({
+    let participation = await models.Participation.create({
       id: uuid(),
       UserId: body.userId,
       EventId: body.eventId,
       startTime: body.startTime,
-    })
-      .then(() => {
-        console.log(`Participation for user: ${body.userId} 
-          on the event: ${body.eventId}`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
+    participation = participation.get({ plain: true });
 
+    ctx.body = { id: participation.EventId };
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -151,13 +145,83 @@ module.exports.updateEvent = async (ctx, next) => {
       EventId: body.eventId,
       geography: point,
       timestamp: body.timestamp,
-    })
-      .then((res) => {
-        console.log('Created new location point: \n', res.get({ plain: true }));
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
+
+    // Compute Shape, Area and Distance based on coords
+    let geometry = await models.Location.findAll({
+      attributes: [
+        [
+          Sequelize.fn(
+            'ST_AsGeoJSON',
+            Sequelize.fn(
+              'ST_Buffer',
+              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+              0.000045,
+            ),
+          ),
+          'Shape',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Area',
+            Sequelize.fn(
+              'ST_Buffer',
+              Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+              0.000045,
+            ), true
+          ),
+          'Area',
+        ],
+        [
+          Sequelize.fn(
+            'ST_Length',
+            Sequelize.fn('ST_MakeLine', Sequelize.col('geography')),
+            true
+          ),
+          'Distance',
+        ]
+      ],
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+    });
+    geometry = geometry[0].dataValues;
+
+    // Update Participation with Shape, Area and Distance
+    await models.Participation.update(
+      {
+        shape: JSON.parse(geometry.Shape),
+        area: geometry.Area,
+        distance: geometry.Distance
+      },
+      {
+        where: {
+          UserId: body.userId,
+          EventId: body.eventId,
+        }
+      },
+    );
+
+    // Get the participationId to append Images and Comments in next tables
+    const participationDetail = await models.Participation.find({
+      where: {
+        UserId: body.userId,
+        EventId: body.eventId,
+      },
+      attributes: [
+        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        'distance',
+        'area',
+        'id',
+        'startTime',
+        'endTime',
+        'EventId',
+        'UserId',
+      ]
+    });
+
+    ctx.body = participationDetail;
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -186,13 +250,7 @@ module.exports.endEvent = async (ctx, next) => {
         },
         returning: true,
       },
-    )
-      .then((res) => {
-        console.log('Participation ended!');
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    );
 
     // Get the participationId to append Images and Comments in next tables
     participationId = await models.Participation.find({
@@ -207,6 +265,7 @@ module.exports.endEvent = async (ctx, next) => {
     // Update the event status
     updateEventStatus(body);
 
+    ctx.body = {};
     ctx.status = 200;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -219,13 +278,7 @@ module.exports.endEvent = async (ctx, next) => {
       id: uuid(),
       ParticipationId: participationId,
       comments: body.comments,
-    })
-      .then(() => {
-        console.log(`Comment added for the participation: ${participationId}`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
   }
 
   // If is passed, create an instance for images related to the participation
@@ -234,13 +287,7 @@ module.exports.endEvent = async (ctx, next) => {
       id: uuid(),
       ParticipationId: participationId,
       imageUrl: body.imageUrl,
-    })
-      .then(() => {
-        console.log(`Images added for the participation: ${participationId}`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
   }
 };
 
@@ -257,13 +304,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
-    })
-      .then(() => {
-        console.log('Participation deleted');
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
 
     // Remove locations related to the deleted participation
     await models.Location.destroy({
@@ -271,14 +312,7 @@ module.exports.deleteEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
-    })
-      .then(() => {
-        console.log(`Locations for the user:${body.userId} 
-          on the event ${body.eventId} deleted!`);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    });
 
     // Update the event status
     updateEventStatus(body);
@@ -292,32 +326,24 @@ module.exports.deleteEvent = async (ctx, next) => {
 
 // Function to check and update the status of an event
 const updateEventStatus = async (body) => {
-  await models.Participation.find({
+  const status = await models.Participation.find({
     where: {
       EventId: body.eventId,
       endTime: null,
     },
-  })
-    .then((res) => {
-      if (!res) {
-        models.Event.update(
-          {
-            active: false,
-            endTime: Date.now(),
-          },
-          {
-            where: {
-              id: body.eventId,
-            },
-          },
-        )
-          .then(() => console.log('Event closed!'))
-          .catch((e) => {
-            throw new Error(e);
-          });
-      }
-    })
-    .catch((e) => {
-      throw new Error(e);
-    });
+  });
+
+  if (!status) {
+    models.Event.update(
+      {
+        active: false,
+        endTime: Date.now(),
+      },
+      {
+        where: {
+          id: body.eventId,
+        },
+      },
+    );
+  }
 };
