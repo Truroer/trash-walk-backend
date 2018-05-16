@@ -50,8 +50,7 @@ module.exports.getStats = async (ctx, next) => {
       [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'totalArea']
     ]
   });
-  // global = global[0];
 
-  ctx.body = global;
+  ctx.body = global[0];
   ctx.status = 200;
 };
