@@ -1,6 +1,6 @@
 'use strict';
 
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const uuid = require('uuid');
 const models = require('../models');
 
@@ -25,6 +25,9 @@ module.exports.getUser = async (ctx, next) => {
       .findAll({
         where: {
           UserId: userId
+        },
+        include: {
+          model: models.Badge
         }
       })
       .then(res => res)
@@ -43,46 +46,23 @@ module.exports.getUser = async (ctx, next) => {
         throw new Error(e);
       });
 
-    // const userTotalTime = await models.Participation
-    //   .findAll({
-    //     where: {
-    //       UserId: userId
-    //     },
-    //     group: ['UserId'],
-    //     attributes: [[sequelize.literal('EXTRACT (EPOCH FROM ("endTime" - "startTime"))::integer/60 FROM "Participations"'), 'timeDiff']],
-    //     // attributes: ['startTime', 'endTime', [sequelize.literal('extract(epoch from (startTime - endTime))::intefer/60 AS timeDifference')],
-    //   })
-    //   .then(res => console.log(res))
-    //   .catch((e) => {
-    //     throw new Error(e);
-    //   });
-
-    const userTotalDistance = await models.Participation
+    const stats = await models.Participation
       .findAll({
         where: {
           UserId: userId
         },
         group: ['UserId'],
-        attributes: [[sequelize.fn('sum', sequelize.col('distance')), 'totalDistance']],
-      })
-      .then(res => res[0].dataValues.totalDistance)
-      .catch((e) => {
-        throw new Error(e);
+        attributes: [
+          [Sequelize.fn('SUM', Sequelize.col('distance')), 'totalDistance'],
+          [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'totalArea']
+        ],
       });
-
-    // const userTotalArea =
-
-    const stats = {
-      // totalTime: userTotalTime,
-      // totalArea: userTotalArea,
-      totalDistance: userTotalDistance,
-    };
 
     ctx.body = {
       userInfo,
       badges,
       participations,
-      stats,
+      stats: stats[0],
     };
     ctx.status = 200;
   } else {
@@ -97,7 +77,7 @@ module.exports.createUser = async (ctx, next) => {
 
   const { body } = ctx.request;
   let newUser;
-  
+
   if (body.email) {
     // Create new user on User table
     newUser = await models.User

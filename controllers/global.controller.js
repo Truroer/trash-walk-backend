@@ -12,27 +12,25 @@ module.exports.getEvents = async (ctx, next) => {
   if (lat && lng) {
     const radius = 2000;
     const currentLocation = Sequelize.literal(`ST_GeomFromText('POINT(${ctx.request.query.lng} ${ctx.request.query.lat})')`);
-    const distance = Sequelize.fn('ST_DistanceSphere', Sequelize.col('geography'), currentLocation);
+    const distance = Sequelize.fn('ST_DistanceSphere', Sequelize.col('shape'), currentLocation);
 
-    const closestLocations = await models.Location.findAll({
-      attributes: [
-        [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('geography')), 'geography'],
-        // [Sequelize.fn('DISTINCT', Sequelize.col('EventId')), 'EventId']
-      ],
+    const closestLocations = await models.Participation.findAll({
+      attributes: ['EventId', [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants']],
       where: Sequelize.where(distance, { $lte: radius }),
-      order: [['timestamp', 'ASC']],
-      // group: ['Location.EventId', 'Location.id', 'Event.id'],
-      // having: ['count(EventId) > 1'],
+      group: ['Participation.id', 'Event.id'],
       include: [{
         model: models.Event,
         where: {
-          active: true
+          active: false,
         },
-        attributes: ['id', 'startTime', 'active'],
-      }],
-    })
-      .then(res => res)
-      .catch((e) => { throw new Error(e); });
+        attributes: [
+          'active',
+          [Sequelize.fn('ST_AsGeoJSON', Sequelize.fn('ST_Union', Sequelize.col('shape'))), 'shape'],
+          [Sequelize.fn('SUM', Sequelize.col('distance')), 'distance'],
+          [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'area']
+        ]
+      }]
+    });
 
     ctx.body = closestLocations;
     ctx.status = 200;
@@ -42,12 +40,18 @@ module.exports.getEvents = async (ctx, next) => {
   }
 };
 
-module.exports.getStats = async (ctx) => {
-  try {
-    ctx.body = `endpoint for getStats`;
-    ctx.status = 200;
-  } catch (e) {
-    ctx.body = `An unexpected error occurred. ${e}`;
-    ctx.status = 400;
-  }
+module.exports.getStats = async (ctx, next) => {
+  if (ctx.method !== 'GET') return next();
+
+  const global = await models.Participation.findAll({
+    attributes: [
+      [Sequelize.fn('SUM', Sequelize.col('distance')), 'totalDistance'],
+      [Sequelize.fn('COUNT', Sequelize.fn('DISTINCT', Sequelize.col('UserId'))), 'totalParticipants'],
+      [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'totalArea']
+    ]
+  });
+  // global = global[0];
+
+  ctx.body = global;
+  ctx.status = 200;
 };
