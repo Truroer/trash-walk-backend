@@ -28,6 +28,14 @@ module.exports.getEvent = async (ctx, next) => {
         'endTime',
         'EventId',
         'UserId',
+      ],
+      include: [
+        {
+          model: models.Comment
+        },
+        {
+          model: models.Image
+        },
       ]
     });
 

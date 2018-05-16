@@ -39,7 +39,15 @@ module.exports.getUser = async (ctx, next) => {
       .findAll({
         where: {
           UserId: userId
-        }
+        },
+        include: [
+          {
+            model: models.Comment
+          },
+          {
+            model: models.Image
+          },
+        ]
       })
       .then(res => res)
       .catch((e) => {
