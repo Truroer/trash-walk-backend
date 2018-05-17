@@ -2,6 +2,7 @@
 
 const Sequelize = require('sequelize');
 const uuid = require('uuid');
+
 const models = require('../models');
 
 module.exports.getUser = async (ctx, next) => {
@@ -70,8 +71,7 @@ module.exports.getUser = async (ctx, next) => {
     };
     ctx.status = 200;
   } else {
-    console.log('The user is mandatory on this request.');
-    ctx.status = 200;
+    ctx.status = 204;
   }
 };
 
@@ -164,7 +164,6 @@ module.exports.createUser = async (ctx, next) => {
       ctx.status = 201;
     }
   } else {
-    console.log('The email field is mandatory on this request.');
     ctx.status = 204;
   }
 };

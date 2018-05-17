@@ -70,7 +70,6 @@ module.exports.getEvent = async (ctx, next) => {
     };
     ctx.status = 200;
   } else {
-    console.log('The queries are mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -102,7 +101,6 @@ module.exports.createEvent = async (ctx, next) => {
     ctx.body = newEvent;
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -126,7 +124,6 @@ module.exports.joinEvent = async (ctx, next) => {
     ctx.body = { id: participation.EventId };
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -241,7 +238,6 @@ module.exports.updateEvent = async (ctx, next) => {
     };
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -284,7 +280,6 @@ module.exports.endEvent = async (ctx, next) => {
     ctx.body = {};
     ctx.status = 200;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 
@@ -336,7 +331,6 @@ module.exports.deleteEvent = async (ctx, next) => {
     ctx.body = {};
     ctx.status = 200;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };

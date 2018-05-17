@@ -45,7 +45,6 @@ module.exports.getEvents = async (ctx, next) => {
     ctx.body = closestLocations;
     ctx.status = 200;
   } else {
-    console.log('LAT and LNG query parameters are mandatory on this request.');
     ctx.status = 204;
   }
 };
