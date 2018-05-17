@@ -14,7 +14,7 @@ module.exports.getEvents = async (ctx, next) => {
     const currentLocation = Sequelize.literal(`ST_GeomFromText('POINT(${ctx.request.query.lng} ${ctx.request.query.lat})')`);
     const distance = Sequelize.fn('ST_DistanceSphere', Sequelize.col('shape'), currentLocation);
 
-    const closestLocations = await models.Participation.findAll({
+    let closestLocations = await models.Participation.findAll({
       attributes: ['EventId', [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants']],
       where: Sequelize.where(distance, { $lte: radius }),
       group: ['Participation.id', 'Event.id'],
@@ -32,13 +32,19 @@ module.exports.getEvents = async (ctx, next) => {
       }]
     });
 
-    ctx.body = {
-      ...closestLocations.dataValues,
-      shape: JSON.parse(closestLocations.dataValues.shape).coordinates,
-    };
+    closestLocations = closestLocations.map((event) => {
+      return {
+        ...event.dataValues,
+        Event: {
+          ...event.dataValues.Event.dataValues,
+          shape: JSON.parse(event.dataValues.Event.dataValues.shape).coordinates,
+        }
+      };
+    });
+
+    ctx.body = closestLocations;
     ctx.status = 200;
   } else {
-    console.log('LAT and LNG query parameters are mandatory on this request.');
     ctx.status = 204;
   }
 };

@@ -31,11 +31,11 @@ module.exports.getEvent = async (ctx, next) => {
       ],
       include: [
         {
-          model: models.Comment
+          model: models.Comment,
         },
         {
-          model: models.Image
-        },
+          model: models.Image,
+        }
       ]
     });
 
@@ -70,7 +70,6 @@ module.exports.getEvent = async (ctx, next) => {
     };
     ctx.status = 200;
   } else {
-    console.log('The queries are mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -102,7 +101,6 @@ module.exports.createEvent = async (ctx, next) => {
     ctx.body = newEvent;
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -126,7 +124,6 @@ module.exports.joinEvent = async (ctx, next) => {
     ctx.body = { id: participation.EventId };
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -221,8 +218,10 @@ module.exports.updateEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
+      group: ['Participation.shape', 'Participation.distance', 'Participation.area', 'Participation.id', 'Participation.startTime', 'Participation.endTime'],
       attributes: [
         [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants'],
         'distance',
         'area',
         'id',
@@ -239,7 +238,6 @@ module.exports.updateEvent = async (ctx, next) => {
     };
     ctx.status = 201;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
@@ -252,10 +250,8 @@ module.exports.endEvent = async (ctx, next) => {
   let participationId;
 
   if (body.userId && body.eventId) {
-    
-    // Update the participation status on the event end.
-    // TODO: Fetch end-time from Locations table. (Timestamp of last location transmitted.)
-    const endedParticipation = await models.Participation.update(
+    // Update the participation status on the event end
+    await models.Participation.update(
       {
         endTime: Date.now(),
       },
@@ -281,30 +277,28 @@ module.exports.endEvent = async (ctx, next) => {
     // Update the event status
     updateEventStatus(body);
 
-    // If is passed, create an instance for comments related to the participation
-    if (body.comments) {
-      await models.Comment.create({
-        id: uuid(),
-        ParticipationId: participationId,
-        comments: body.comments,
-      });
-    }
-  
-    // If is passed, create an instance for images related to the participation
-    if (body.imageUrl) {
-      await models.Image.create({
-        id: uuid(),
-        ParticipationId: participationId,
-        imageUrl: body.imageUrl,
-      });
-    }
-    
     ctx.body = {};
     ctx.status = 200;
-
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
+  }
+
+  // If is passed, create an instance for comments related to the participation
+  if (body.comments) {
+    await models.Comment.create({
+      id: uuid(),
+      ParticipationId: participationId,
+      comments: body.comments,
+    });
+  }
+
+  // If is passed, create an instance for images related to the participation
+  if (body.imageUrl) {
+    await models.Image.create({
+      id: uuid(),
+      ParticipationId: participationId,
+      imageUrl: body.imageUrl,
+    });
   }
 };
 
@@ -333,11 +327,10 @@ module.exports.deleteEvent = async (ctx, next) => {
 
     // Update the event status
     updateEventStatus(body);
-    
-    ctx.body = {}
+
+    ctx.body = {};
     ctx.status = 200;
   } else {
-    console.log('The request body is mandatory on this request.');
     ctx.status = 204;
   }
 };
