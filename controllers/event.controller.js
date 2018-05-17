@@ -28,6 +28,14 @@ module.exports.getEvent = async (ctx, next) => {
         'endTime',
         'EventId',
         'UserId',
+      ],
+      include: [
+        {
+          model: models.Comment
+        },
+        {
+          model: models.Image
+        },
       ]
     });
 
@@ -50,10 +58,14 @@ module.exports.getEvent = async (ctx, next) => {
     });
 
     ctx.body = {
-      participation: participationDetail,
+      participation: {
+        ...participationDetail.dataValues,
+        shape: JSON.parse(participationDetail.dataValues.shape).coordinates,
+      },
       event: {
         ...eventStats[0].dataValues,
         ...eventDetail[0].dataValues,
+        shape: JSON.parse(eventStats[0].dataValues.shape).coordinates,
       },
     };
     ctx.status = 200;
@@ -221,7 +233,10 @@ module.exports.updateEvent = async (ctx, next) => {
       ]
     });
 
-    ctx.body = participationDetail;
+    ctx.body = {
+      ...participationDetail.dataValues,
+      shape: JSON.parse(participationDetail.dataValues.shape).coordinates,
+    };
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
@@ -236,12 +251,13 @@ module.exports.endEvent = async (ctx, next) => {
   const { body } = ctx.request;
   let participationId;
 
-  if (body.userId && body.eventId && body.distance && body.endTime) {
-    // Update the participation status on the event end
-    await models.Participation.update(
+  if (body.userId && body.eventId) {
+    
+    // Update the participation status on the event end.
+    // TODO: Fetch end-time from Locations table. (Timestamp of last location transmitted.)
+    const endedParticipation = await models.Participation.update(
       {
-        distance: body.distance,
-        endTime: body.endTime,
+        endTime: Date.now(),
       },
       {
         where: {
@@ -265,29 +281,30 @@ module.exports.endEvent = async (ctx, next) => {
     // Update the event status
     updateEventStatus(body);
 
+    // If is passed, create an instance for comments related to the participation
+    if (body.comments) {
+      await models.Comment.create({
+        id: uuid(),
+        ParticipationId: participationId,
+        comments: body.comments,
+      });
+    }
+  
+    // If is passed, create an instance for images related to the participation
+    if (body.imageUrl) {
+      await models.Image.create({
+        id: uuid(),
+        ParticipationId: participationId,
+        imageUrl: body.imageUrl,
+      });
+    }
+    
     ctx.body = {};
     ctx.status = 200;
+
   } else {
     console.log('The request body is mandatory on this request.');
     ctx.status = 204;
-  }
-
-  // If is passed, create an instance for comments related to the participation
-  if (body.comments) {
-    await models.Comment.create({
-      id: uuid(),
-      ParticipationId: participationId,
-      comments: body.comments,
-    });
-  }
-
-  // If is passed, create an instance for images related to the participation
-  if (body.imageUrl) {
-    await models.Image.create({
-      id: uuid(),
-      ParticipationId: participationId,
-      imageUrl: body.imageUrl,
-    });
   }
 };
 
@@ -316,7 +333,8 @@ module.exports.deleteEvent = async (ctx, next) => {
 
     // Update the event status
     updateEventStatus(body);
-
+    
+    ctx.body = {}
     ctx.status = 200;
   } else {
     console.log('The request body is mandatory on this request.');

@@ -32,7 +32,10 @@ module.exports.getEvents = async (ctx, next) => {
       }]
     });
 
-    ctx.body = closestLocations;
+    ctx.body = {
+      ...closestLocations.dataValues,
+      shape: JSON.parse(closestLocations.dataValues.shape).coordinates,
+    };
     ctx.status = 200;
   } else {
     console.log('LAT and LNG query parameters are mandatory on this request.');
@@ -50,8 +53,7 @@ module.exports.getStats = async (ctx, next) => {
       [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'totalArea']
     ]
   });
-  // global = global[0];
 
-  ctx.body = global;
+  ctx.body = global[0];
   ctx.status = 200;
 };
