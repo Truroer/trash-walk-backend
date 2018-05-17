@@ -32,6 +32,14 @@ module.exports.getUser = async (ctx, next) => {
         where: {
           UserId: userId
         },
+        attributes: [
+          'id',
+          'UserId',
+          'EventId',
+          'startTime',
+          'endTime',
+          'distance',
+        ],
         include: [
           {
             model: models.Comment
@@ -83,7 +91,6 @@ module.exports.createUser = async (ctx, next) => {
       });
 
     if (user) {
-
       const badges = await models.Achievement
         .findAll({
           where: {
@@ -99,6 +106,14 @@ module.exports.createUser = async (ctx, next) => {
           where: {
             UserId: user.id
           },
+          attributes: [
+            'id',
+            'UserId',
+            'EventId',
+            'startTime',
+            'endTime',
+            'distance',
+          ],
           include: [
             {
               model: models.Comment
