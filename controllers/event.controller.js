@@ -333,6 +333,7 @@ module.exports.deleteEvent = async (ctx, next) => {
     // Update the event status
     updateEventStatus(body);
 
+    ctx.body = {};
     ctx.status = 200;
   } else {
     console.log('The request body is mandatory on this request.');
