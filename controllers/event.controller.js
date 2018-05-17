@@ -28,6 +28,14 @@ module.exports.getEvent = async (ctx, next) => {
         'endTime',
         'EventId',
         'UserId',
+      ],
+      include: [
+        {
+          model: models.Comment,
+        },
+        {
+          model: models.Image,
+        }
       ]
     });
 
@@ -213,8 +221,10 @@ module.exports.updateEvent = async (ctx, next) => {
         UserId: body.userId,
         EventId: body.eventId,
       },
+      group: ['Participation.shape', 'Participation.distance', 'Participation.area', 'Participation.id', 'Participation.startTime', 'Participation.endTime'],
       attributes: [
         [Sequelize.fn('ST_AsGeoJSON', Sequelize.col('shape')), 'shape'],
+        [Sequelize.fn('COUNT', Sequelize.col('UserId')), 'participants'],
         'distance',
         'area',
         'id',
@@ -225,7 +235,10 @@ module.exports.updateEvent = async (ctx, next) => {
       ]
     });
 
-    ctx.body = participationDetail;
+    ctx.body = {
+      ...participationDetail.dataValues,
+      shape: JSON.parse(participationDetail.dataValues.shape).coordinates,
+    };
     ctx.status = 201;
   } else {
     console.log('The request body is mandatory on this request.');
