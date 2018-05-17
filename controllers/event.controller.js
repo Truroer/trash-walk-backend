@@ -236,12 +236,11 @@ module.exports.endEvent = async (ctx, next) => {
   const { body } = ctx.request;
   let participationId;
 
-  if (body.userId && body.eventId && body.distance && body.endTime) {
+  if (body.userId && body.eventId) {
     // Update the participation status on the event end
     await models.Participation.update(
       {
-        distance: body.distance,
-        endTime: body.endTime,
+        endTime: Date.now(),
       },
       {
         where: {
