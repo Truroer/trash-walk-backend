@@ -15,10 +15,6 @@ module.exports.getUser = async (ctx, next) => {
         where: {
           id: userId,
         },
-      })
-      .then(res => res)
-      .catch((e) => {
-        throw new Error(e);
       });
 
     const badges = await models.Achievement
@@ -29,10 +25,6 @@ module.exports.getUser = async (ctx, next) => {
         include: {
           model: models.Badge
         }
-      })
-      .then(res => res)
-      .catch((e) => {
-        throw new Error(e);
       });
 
     const participations = await models.Participation
@@ -48,10 +40,6 @@ module.exports.getUser = async (ctx, next) => {
             model: models.Image
           },
         ]
-      })
-      .then(res => res)
-      .catch((e) => {
-        throw new Error(e);
       });
 
     const stats = await models.Participation
@@ -87,25 +75,79 @@ module.exports.createUser = async (ctx, next) => {
   let newUser;
 
   if (body.email) {
-    // Create new user on User table
-    newUser = await models.User
-      .create({
-        id: uuid(),
-        firstName: body.firstName,
-        lastName: body.lastName,
-        email: body.email,
-        token: body.token,
-      })
-      .then(res => res.get({ plain: true }))
-      .catch((e) => { throw new Error(e); });
+    const user = await models.User
+      .findOne({
+        where: {
+          email: body.email,
+        }
+      });
 
-    ctx.body = {
-      ...newUser,
-      badges: [],
-      participations: [],
-      stats: {},
-    };
-    ctx.status = 201;
+    if (user) {
+
+      const badges = await models.Achievement
+        .findAll({
+          where: {
+            UserId: user.id
+          },
+          include: {
+            model: models.Badge
+          }
+        });
+
+      const participations = await models.Participation
+        .findAll({
+          where: {
+            UserId: user.id
+          },
+          include: [
+            {
+              model: models.Comment
+            },
+            {
+              model: models.Image
+            },
+          ]
+        });
+
+      const stats = await models.Participation
+        .findAll({
+          where: {
+            UserId: user.id
+          },
+          group: ['UserId'],
+          attributes: [
+            [Sequelize.fn('SUM', Sequelize.col('distance')), 'totalDistance'],
+            [Sequelize.fn('ST_Area', Sequelize.fn('ST_Union', Sequelize.col('shape')), true), 'totalArea']
+          ],
+        });
+
+      ctx.body = {
+        ...user.dataValues,
+        badges,
+        participations,
+        stats,
+      };
+
+      ctx.status = 200;
+    } else {
+      // Create new user on User table
+      newUser = await models.User
+        .create({
+          id: uuid(),
+          firstName: body.firstName,
+          lastName: body.lastName,
+          email: body.email,
+          token: body.token,
+        });
+
+      ctx.body = {
+        ...newUser.dataValues,
+        badges: [],
+        participations: [],
+        stats: {},
+      };
+      ctx.status = 201;
+    }
   } else {
     console.log('The email field is mandatory on this request.');
     ctx.status = 204;
