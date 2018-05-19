@@ -138,4 +138,4 @@ Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-wa
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE.md) file for details 
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE) file for details 
