@@ -3,9 +3,11 @@
 
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
-![Trash Walk](https://i.imgur.com/TcuVFSW.png)
+<div align="center">
+ <img width="200" height="200" src="https://i.imgur.com/TcuVFSW.png" />
+</div>
 
-Trash Walk is a mobile app that allow the user to keep track of his plogging walks.
+Trash Walk is an app aimed at helping us make the world a cleaner place!
 
 ## Table of contents
 
@@ -16,7 +18,8 @@ Trash Walk is a mobile app that allow the user to keep track of his plogging wal
 * [Developers team](#developers-team)
 * [License](#license)
 
-##Getting started
+
+## Getting started
 
 A few things you have to take in consideration before using Trash Walk - Server
 
@@ -109,30 +112,30 @@ cd trash-walk-backend
 npm start
 ```
 
-##Postman collection
+## Postman collection
 
-Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-walk-backend/blob/develop/Trash-Walk.postman_collection.json)  to get all requests.
+Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-walk-backend/blob/develop/Trash-Walk.postman_collection.json) to test all API endpoints.
 
 ## Tech Stack
 
 ### Back-end:
 
 * [Koa](https://koajs.com/)
-* [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
+* [PostgreSQL](https://www.postgresql.org/) & [PostGIS](https://postgis.net/)
 * [Sequelize](http://docs.sequelizejs.com/)
 
 ### Front-end: [trash-walk-frontend](https://github.com/cherlin/trash-walk-frontend)
 
 ## Developers team
 
-* Christofer Herlin [GitHub](https://github.com/cherlin) - [Linkedin](https://www.linkedin.com/in/cherl/)
+* Christofer Herlin - [GitHub](https://github.com/cherlin) - [LinkedIn](https://www.linkedin.com/in/cherl/)
 
-* Juliane Nagao [GitHub](https://github.com/junagao) - [Linkedin](https://www.linkedin.com/in/junagao/)
+* Juliane Nagao - [GitHub](https://github.com/junagao) - [LinkedIn](https://www.linkedin.com/in/junagao/)
 
-* Necati Özmen [GitHub](https://github.com/necatiozmen) - [Linkedin](https://www.linkedin.com/in/necatiozmen/)
+* Necati Özmen - [GitHub](https://github.com/necatiozmen) - [LinkedIn](https://www.linkedin.com/in/necatiozmen/)
 
-* Marco Antonio Ghiani [GitHub](https://github.com/marcoantonioghiani01) - [Linkedin](https://www.linkedin.com/in/marcoantonioghiani/)
+* Marco Antonio Ghiani - [GitHub](https://github.com/marcoantonioghiani01) - [LinkedIn](https://www.linkedin.com/in/marcoantonioghiani/)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE.md) file for details 
