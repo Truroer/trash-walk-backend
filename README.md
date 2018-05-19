@@ -125,7 +125,7 @@ Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-wa
 
 * Juliane Nagao [GitHub](https://github.com/junagao) - [Linkedin](https://www.linkedin.com/in/junagao/)
 
-* Necati Özmen [GitHub](https://github.com/necatiozmen)
+* Necati Özmen [GitHub](https://github.com/necatiozmen) - [Linkedin](https://www.linkedin.com/in/necatiozmen/)
 
 * Marco Antonio Ghiani [GitHub](https://github.com/marcoantonioghiani01) - [Linkedin](https://www.linkedin.com/in/marcoantonioghiani/)
 
