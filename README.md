@@ -113,11 +113,15 @@ npm start
 
 Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-walk-backend/blob/develop/Trash-Walk.postman_collection.json)  to get all requests.
 
-## Tech Stack:
+## Tech Stack
+
+### Back-end:
 
 * [Koa](https://koajs.com/)
 * [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
 * [Sequelize](http://docs.sequelizejs.com/)
+
+### Front-end: [trash-walk-frontend](https://github.com/cherlin/trash-walk-frontend)
 
 ## Developers team
 
