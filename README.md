@@ -11,6 +11,7 @@ Trash Walk is a mobile app that allow the user to keep track of his plogging wal
 
 * [Getting started](#getting-started)
 * [Usage](#usage)
+* [Postman collection](#postman-collection)
 * [Tech Stack](#tech-stack)
 * [Developers team](#developers-team)
 * [License](#license)
@@ -25,7 +26,6 @@ After cloning the repo you'll have to :
 
 * [Node](https://nodejs.org/en/): `brew install node`
 * [Npm](https://www.npmjs.com/): `npm install`
-* [Xcode](https://developer.apple.com/xcode/)
 * [Homebrew](https://brew.sh/)
 
 ### Migrate and connect Postgres database
@@ -37,13 +37,13 @@ brew install postgres
 brew install postgis
 ```
 
-Access postgres command line on the default database postgres:
+Access PostgresSQL command line on the default database "postgres":
 
 ```bash
 psql postgres
 ```
 
-You should see on your bash a screen like this:
+Your bash should now look like this:
 
 ```bash
 psql (10.3)
@@ -72,7 +72,7 @@ Now set a password for the current user:
 trashwalk=# ALTER USER <user_name> WITH PASSWORD 'new_password';
 ```
 
-Finally, create the extension for PostGis:
+Finally, create the extension for PostGIS:
 
 ```bash
 trashwalk=# CREATE EXTENSION postgis;
@@ -84,7 +84,7 @@ Now your database setup is finished and you are ready to connect it with the ser
 
 In order to do this, create an **.env** file in the root server folder with this structure:
 
-```plain
+```dotenv
 DB_USER=<user-name>
 DB_PASS=<password>
 DB_HOST=localhost
@@ -104,16 +104,16 @@ node_modules/.bin/sequelize db:migrate
 
 Start the server:
 
-`npm start`
+```bash
+cd trash-walk-backend
+npm start
+```
+
+##Postman collection
+
+Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-walk-backend/blob/develop/Trash-Walk.postman_collection.json)  to get all requests.
 
 ## Tech Stack:
-
-### Front-end:
-
-* [React Native](https://facebook.github.io/react-native/)
-* [Redux](https://redux.js.org/)
-
-### Back-end: 
 
 * [Koa](https://koajs.com/)
 * [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
@@ -131,4 +131,4 @@ Start the server:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/marcoantonioghiani01/trash-walk-backend/blob/develop/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE.md) file for details

@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "8a9f3518-5e9c-4ab2-a940-2baf81930d82",
+		"name": "Trash Walk",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "event",
+			"description": "",
+			"item": [
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"2fda89aa-65dd-45b5-a637-7b3c69c8c71d\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/event",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/event?userId=1254b853-bb37-4b30-85bb-9892af99637b&eventId=e4123217-67be-4c11-82d7-8911be1325d9",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1254b853-bb37-4b30-85bb-9892af99637b"
+								},
+								{
+									"key": "eventId",
+									"value": "e4123217-67be-4c11-82d7-8911be1325d9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"eventId\": \"e4123217-67be-4c11-82d7-8911be1325d9\",\n    \"userId\": \"1254b853-bb37-4b30-85bb-9892af99637b\",\n\t\"lat\": 45.471865065269576,\n\t\"lng\": -122.70668506622314,\n\t\"timestamp\": \"2018-05-10 12:58:43.482+02\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/event/update",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/event/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EndEventPartecipation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\":\"3ab2d5de-8881-495f-88c8-8154998339f1\",\n\t\"eventId\": \"a3829c50-40d2-4d36-a5da-9658c63a040d\",\n\t\"distance\": 34567890,\n\t\"endTime\": \"2018-05-10 12:58:43.482+02\",\n\t\"comments\": \"My first comment!\",\n\t\"imageUrl\": \"http://fakeurl.com\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/event/end",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event",
+								"end"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"9ec4d047-484e-4103-bcfc-0c242bd3de81\",\n\t\"eventId\": \"94758180-8772-4914-a90c-29cfa011fe0d\",\n\t\"startTime\": \"2018-05-10 12:58:43.482+02\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/event/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"event",
+								"join"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"description": "",
+			"item": [
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/user/a6b5b5d7-c64c-48eb-8584-b81996987899",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"a6b5b5d7-c64c-48eb-8584-b81996987899"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"juliane\",\n\t\"lastName\": \"nagao\",\n\t\"email\": \"ghia@codeworks.com\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/user/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/user/username",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"username"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/user/username",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"username"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "global",
+			"description": "",
+			"item": [
+				{
+					"name": "Get closest events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/events?lat=37.4003306597238&lng=-122.022778262326",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "lat",
+									"value": "37.4003306597238"
+								},
+								{
+									"key": "lng",
+									"value": "-122.022778262326"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:3000/stats",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
