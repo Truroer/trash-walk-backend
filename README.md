@@ -1,19 +1,21 @@
 # Trash Walk - Server
+> Node.js server to compute and store data, providing services to Trash Walk mobile app.
 
-## Tech Stack:
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
-### Front-end:
+![Trash Walk](https://i.imgur.com/TcuVFSW.png)
 
-- [React Native](https://facebook.github.io/react-native/)
-- [Redux](https://redux.js.org/)
+Trash Walk is a mobile app that allow the user to keep track of his plogging walks.
 
-### Back-end: 
+## Table of contents
 
-- [Koa](https://koajs.com/)
-- [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
-- [Sequelize](http://docs.sequelizejs.com/)
+* [Getting started](#getting-started)
+* [Usage](#usage)
+* [Tech Stack](#tech-stack)
+* [Developers team](#developers-team)
+* [License](#license)
 
-# Using Trash Walk - Server
+##Getting started
 
 A few things you have to take in consideration before using Trash Walk - Server
 
@@ -26,18 +28,20 @@ After cloning the repo you'll have to :
 * [Xcode](https://developer.apple.com/xcode/)
 * [Homebrew](https://brew.sh/)
 
-# Migrate and connect Postgres database
+### Migrate and connect Postgres database
 
 Install PostGres and PostGis on your machine:
 
 ```bash
-$ brew install postgres
-$ brew install postgis
+brew install postgres
+brew install postgis
 ```
 
 Access postgres command line on the default database postgres:
 
-`$ psql postgres`
+```bash
+psql postgres
+```
 
 You should see on your bash a screen like this:
 
@@ -50,9 +54,10 @@ postgres=#
 
 Now create a new database for the current user and connect it:
 
-`postgres=# CREATE DATABASE trashwalk;`
-
-`postgres=# \c trashwalk;`
+```bash
+postgres=# CREATE DATABASE trashwalk;
+postgres=# \c trashwalk;
+```
 
 The result will be:
 
@@ -63,13 +68,15 @@ trashwalk=#
 
 Now set a password for the current user:
 
-```
+```bash
 trashwalk=# ALTER USER <user_name> WITH PASSWORD 'new_password';
 ```
 
 Finally, create the extension for PostGis:
 
-`trashwalk=# CREATE EXTENSION postgis;`
+```bash
+trashwalk=# CREATE EXTENSION postgis;
+```
 
 Always remember the semicolon or the syntax will not work.
 
@@ -90,22 +97,38 @@ You also can change the port or database name on postgres configuration database
 Finally, migrate the database on your local machine:
 
 ```bash 
-$ cd trash-walk-backend
-$ node_modules/.bin/sequelize db:migrate
+cd trash-walk-backend
+node_modules/.bin/sequelize db:migrate
 ```
+## Usage
 
-## Start the server
+Start the server:
 
-In the shell type:
+`npm start`
 
-`$ npm start`
+## Tech Stack:
 
-## Developers Team
+### Front-end:
 
-Christofer Herlin- [GitHub](https://github.com/cherlin)
+* [React Native](https://facebook.github.io/react-native/)
+* [Redux](https://redux.js.org/)
 
-Juliane Nagao- [GitHub](https://github.com/junagao)
+### Back-end: 
 
-Necati Özmen - [GitHub](https://github.com/necatiozmen)
+* [Koa](https://koajs.com/)
+* [Postgres](https://www.postgresql.org/) & [PostGis](https://postgis.net/)
+* [Sequelize](http://docs.sequelizejs.com/)
 
-Marco Antonio Ghiani - [GitHub](https://github.com/marcoantonioghiani01)
+## Developers team
+
+* Christofer Herlin [GitHub](https://github.com/cherlin) - [Linkedin](https://www.linkedin.com/in/cherl/)
+
+* Juliane Nagao [GitHub](https://github.com/junagao) - [Linkedin](https://www.linkedin.com/in/junagao/)
+
+* Necati Özmen [GitHub](https://github.com/necatiozmen)
+
+* Marco Antonio Ghiani [GitHub](https://github.com/marcoantonioghiani01) - [Linkedin](https://www.linkedin.com/in/marcoantonioghiani/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/marcoantonioghiani01/trash-walk-backend/blob/develop/LICENSE.md) file for details
