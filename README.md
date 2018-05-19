@@ -4,7 +4,7 @@
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 <div align="center">
- <img width="200" height="200" src="https://i.imgur.com/TcuVFSW.png" />
+ <img width="500" height="500" src="https://i.imgur.com/TcuVFSW.png" />
 </div>
 
 Trash Walk is an app aimed at helping us make the world a cleaner place!
