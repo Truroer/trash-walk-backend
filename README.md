@@ -7,7 +7,10 @@
  <img width="500" height="500" src="https://i.imgur.com/TcuVFSW.png" />
 </div>
 
-Trash Walk is an app aimed at helping us make the world a cleaner place!
+Trash Walk is a mobile (iOS) app aimed at helping us make the world a cleaner place! The app is a tool for people cleaning (doing "trash walks"), and uses their phones GPS to save their walks to a shared database. This brings two main benefits:
+
+1. It documents the efforts made, for the ones volunteering their time (and everyone else!).
+2. Make the activitity more gratifying to the trash walkers themselves by "gamification" and social functions.
 
 ## Table of contents
 
@@ -33,7 +36,7 @@ After cloning the repo you'll have to :
 
 ### Migrate and connect Postgres database
 
-Install PostGres and PostGis on your machine:
+Install PostgreSQL and PostGIS on your machine:
 
 ```bash
 brew install postgres
@@ -81,7 +84,7 @@ Finally, create the extension for PostGIS:
 trashwalk=# CREATE EXTENSION postgis;
 ```
 
-Always remember the semicolon or the syntax will not work.
+**Always remember the semicolon or the syntax will not work.**
 
 Now your database setup is finished and you are ready to connect it with the server. 
 
