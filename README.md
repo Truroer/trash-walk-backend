@@ -3,9 +3,9 @@
 
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
-<div align="center">
- <img width="500" height="500" src="https://i.imgur.com/TcuVFSW.png" />
-</div>
+<p align="center">
+  <img src="https://i.imgur.com/PhVkn2M.png" />
+</p>
 
 Trash Walk is a mobile (iOS) app aimed at helping us make the world a cleaner place! The app is a tool for people cleaning (doing "trash walks"), and uses their phones GPS to save their walks to a shared database. This brings two main benefits:
 
@@ -14,6 +14,7 @@ Trash Walk is a mobile (iOS) app aimed at helping us make the world a cleaner pl
 
 ## Table of contents
 
+* [Screenshots](#screenshots)
 * [Getting started](#getting-started)
 * [Usage](#usage)
 * [Postman collection](#postman-collection)
@@ -21,6 +22,12 @@ Trash Walk is a mobile (iOS) app aimed at helping us make the world a cleaner pl
 * [Developers team](#developers-team)
 * [License](#license)
 
+## Screenshots
+
+<p align="center">
+  <img src="https://i.imgur.com/EbMH34N.png" />
+  <img src="https://i.imgur.com/uho3oCD.png" />
+</p>
 
 ## Getting started
 
@@ -86,7 +93,7 @@ trashwalk=# CREATE EXTENSION postgis;
 
 **Always remember the semicolon or the syntax will not work.**
 
-Now your database setup is finished and you are ready to connect it with the server. 
+Now your database setup is finished and you are ready to connect it with the server.
 
 In order to do this, create an **.env** file in the root server folder with this structure:
 
@@ -102,7 +109,7 @@ You also can change the port or database name on postgres configuration database
 
 Finally, migrate the database on your local machine:
 
-```bash 
+```bash
 cd trash-walk-backend
 node_modules/.bin/sequelize db:migrate
 ```
@@ -141,4 +148,4 @@ Use the [Trash Walk.postman_collection.json](https://github.com/cherlin/trash-wa
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE) file for details 
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cherlin/trash-walk-backend/blob/develop/LICENSE) file for details
