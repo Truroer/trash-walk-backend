@@ -32,13 +32,12 @@ describe('events',  function() {
             spy.calledOnce.should.be.true;
         })
 
-        it('should have a truthy status', async function() {
+        it('should have status of type number', async function() {
             await Events.createEvent(ctx);
             console.log(ctx.status);
             ctx.status.should.be.a('number');
         })
 
-        
 
     })
 
