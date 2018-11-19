@@ -2,7 +2,21 @@ let Events = require ('../../controllers/event.controller');
 const chai = require ('chai');
 const expect = require ('chai').expect
 const should = chai.should();
-const sinon = require ('sinon')
+const sinon = require ('sinon');
+
+// let models = require('../../models');
+// models.Participation = {
+//     find: () => {
+
+//     }
+// };
+
+const mockParticipationModel = {
+    find: () => {
+
+    }
+};
+const eventController = new EventController(mockParticipationModel);
 
 describe('events',  function() {
     const ctx = { 

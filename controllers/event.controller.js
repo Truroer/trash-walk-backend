@@ -6,6 +6,25 @@ const uuid = require('uuid');
 
 const models = require('../models');
 
+module.exports = class EventsController {
+  constructor(participationModel) {
+    this.Participation = participationModel;
+  }
+
+  getEvent = async (ctx, next) => {
+    if (query.userId && query.eventId) {
+      // Get the participationId to append Images and Comments in next tables
+      const participationDetail = await this.Participation.find({
+        where: {
+          UserId: query.userId,
+          EventId: query.eventId,
+        },
+      });
+  }
+
+
+}
+
 // Get info about a specific event
 module.exports.getEvent = async (ctx, next) => {
   if (ctx.method !== 'GET') return next();

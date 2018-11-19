@@ -2,15 +2,17 @@
 
 const router = require('koa-router')();
 
-const controller = require('../controllers/event.controller');
+const EventController = require('../controllers/event.controller');
+const Participation = require('../models').Participation;
+const eventController = new EventController(Participation);
 
 // Create routes for events
 router
-  .post('/', controller.createEvent)
-  .post('/update', controller.updateEvent)
-  .post('/end', controller.endEvent)
-  .post('/join', controller.joinEvent)
-  .get('/', controller.getEvent)
-  .delete('/', controller.deleteEvent);
+  .post('/', eventController.createEvent)
+  .post('/update', eventController.updateEvent)
+  .post('/end', eventController.endEvent)
+  .post('/join', eventController.joinEvent)
+  .get('/', eventController.getEvent)
+  .delete('/', eventController.deleteEvent);
 
 module.exports = router;
