@@ -74,6 +74,7 @@ module.exports.getEvent = async (ctx, next) => {
   }
 };
 
+
 // Create a new event
 module.exports.createEvent = async (ctx, next) => {
   if (ctx.method !== 'POST') return next();
